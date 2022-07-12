@@ -19,7 +19,7 @@ async function getPdfs(userId) {
 async function getPdfPageHtml(pdfIdx, pageNum) {
     const connection = await pool.getConnection(async (conn) => conn);
     const getPdfPageInfoQuery = `
-            SELECT pdfIdx, pageNum, pageHtml, createdAt FROM pdfpages WHERE pdfIdx = ${pdfIdx} AND pageNum = ${pageNum};
+            SELECT pdfIdx, pageNum, pageHtml FROM pdfpages WHERE pdfIdx = ${pdfIdx} AND pageNum = ${pageNum};
                   `;
   
     const [getPdfPageInfoRows] = await connection.query(
