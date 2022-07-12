@@ -15,7 +15,7 @@ jobs:
         port: ${{ secrets.PORT }}
         script: |
           cd /home/node_server/label_back
-          git pull
+          git stash && git pull origin main && git stash pop
           npm install
           pm2 delete 0
           pm2 start index.js
