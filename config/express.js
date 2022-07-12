@@ -21,6 +21,7 @@ module.exports = function () {
     app.use(cors());
 
     require('../src/routes/testRoute')(app);
+    require('../src/routes/pdfRoute')(app);
 
     return app;
 };
