@@ -51,6 +51,14 @@ exports.postHighlight = async function (req, res) {
         let checkEndLine = await argCheck(endLine);
         let checkEndOff = await argCheck(endOffset);
         let checkEndNode = await argCheck(endNode);
+
+        if (isNaN(pdfIdx) || isNaN(pageNum) || isNaN(startOffset) || isNaN(startNode) || isNaN(endOffset) || isNaN(endNode)) {
+            return res.json({
+                isSuccess: false,
+                code: 2201,
+                message: "int로 주어야 하는 body 인자를 제대로 확인하세요",
+            })
+        }
         
         if (checkPdf || checkPage || checkStartLine || checkStartOff || checkStartNode || checkEndLine || checkEndOff || checkEndNode) {
             return res.json({
