@@ -42,7 +42,7 @@ async function postHighlightInfo(bookIdx, pageNum, startLine, startOffset, start
     const connection = await pool.getConnection(async (conn) => conn);
     const postHighlightInfoQuery = `
             INSERT INTO highlights(userBookIdx, pageNum, startLine, startOffset, startNode, endLine, endOffset, endNode)
-            VALUES (${bookIdx}, ${pageNum}, ${startLine}, ${startOffset}, ${startNode}, ${endLine}, ${endOffset}, ${endNode});
+            VALUES (${bookIdx}, ${pageNum}, '${startLine}', ${startOffset}, ${startNode}, '${endLine}', ${endOffset}, ${endNode});
                   `;
   
     const [postHighlightInfoRows] = await connection.query(
