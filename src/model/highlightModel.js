@@ -65,6 +65,7 @@ async function getHighlightPageInfo(bookIdx, pageNum) {
             endLine,
             endOffset,
             endNode,
+            data,
             createdAt,
             updatedAt
         FROM highlights
