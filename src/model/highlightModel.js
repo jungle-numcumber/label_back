@@ -77,10 +77,23 @@ async function getHighlightPageInfo(bookIdx, pageNum) {
     return getBookIndexInfoRows;
 }
 
+async function deleteHighlightInfo(highlightIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const deleteHighlightInfoQuery = `
+            DELETE FROM highlights WHERE highlightIdx = ${highlightIdx};
+                  `;
+  
+    const [deleteHighlightInfoRows] = await connection.query(
+        deleteHighlightInfoQuery
+    );
+    connection.release();
+    return deleteHighlightInfoRows;
+}
 
 module.exports = {
     getBookIndexInfo,
     getHighlightInfo,
     postHighlightInfo,
-    getHighlightPageInfo
+    getHighlightPageInfo,
+    deleteHighlightInfo
 }

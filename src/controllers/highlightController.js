@@ -106,3 +106,28 @@ exports.getPageHighlight = async function (req, res) {
         });
     }
 };
+
+exports.deleteHighlight = async function (req, res) {
+
+    try {
+        // userIdx 동적으로 수정 예정
+        const userIdx = 1;
+        const highlightIdx = req.params.highlightIdx;      
+        const deleteHighlightInfoRows = await highlightModel.deleteHighlightInfo(highlightIdx);
+        
+        return res.json({
+            isSuccess: true,
+            code: 1000,
+            message: "하이라이트 삭제 성공",
+        })
+
+    } catch (err) {
+        console.log(`App - delete highlight info Query error\n: ${JSON.stringify(err)}`);
+        
+        return res.json({
+            isSuccess: false,
+            code: 2000,
+            message: "하이라이트 삭제 실패",
+        });
+    }
+};

@@ -5,4 +5,6 @@ module.exports = function(app){
     app.post('/highlights', highlight.postHighlight);
     app.get('/highlights/pdfs/:pdfIdx/pages/:pageNum', highlight.getPageHighlight);
 
+    app.delete('/highlights/:highlightIdx', highlight.deleteHighlight);
+
 };
