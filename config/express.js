@@ -11,7 +11,7 @@ module.exports = function () {
 
     app.use(express.json());
 
-    // restful api 중 put, delete를 사용하기 위해 씀
+    // restful api 중 form으로 put, delete를 사용하기 위해 씀
     app.use(methodOverride());
 
     // urlencoded 페이로드로 들어오는 요청을 분석, extended true는 qs 모듈을 써서 body parsing
