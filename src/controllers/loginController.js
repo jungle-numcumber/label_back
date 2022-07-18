@@ -4,29 +4,6 @@ const loginModel = require('../model/loginModel');
 const crypto = require('crypto');
 const loginController = require('../controllers/loginController');
 const google = require('googleapis');
-var googleClient = require('../../config/google.json');
-
-const googleConfig = {
-    clientId: googleClient.web.client_id,
-    clientSecret: googleClient.web.client_secret,
-    redirect: googleClient.web.redirect_uris[0]
-};
-
-const scopes = [
-    'https://www.googleapis.com/auth/userinfo.profile',
-    'https://www.googleapis.com/auth/userinfo.email',
-];
-
-const oauth2Client = new google.Auth.OAuth2Client(
-    googleConfig.clientId,
-    googleConfig.clientSecret,
-    googleConfig.redirect
-);
-
-const url = oauth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: scopes
-});
 
 // login
 // 궁금한 부분: 
@@ -65,12 +42,29 @@ async function googleLogin(tokens) {
 
 exports.socialLoginCallback = async function (req, res) {
     // res.redirect(url);
-    const googleUser = await googleLogin(req.tokens);
-    const userIdx = await socialLogin(googleUser.email, googleUser.name);
-    console.log("success login");
-    req.session.userId = userIdx;
-    req.session.is_logined = true;
-    res.send(userIdx);
+    try {
+        const googleUser = await googleLogin(req.body.tokens);
+        const userIdx = await socialLogin(googleUser.email, googleUser.name);
+        console.log("success login");
+        req.session.userId = userIdx;
+        req.session.is_logined = true;
+
+        return res.json({
+            result: userIdx,
+            isSuccess: true,
+            code: 1000,
+            message: "유저 구글 로그인 성공",
+        })
+
+    } catch (err) {
+        console.log(`App - get login error\n: ${JSON.stringify(err)}`);
+        
+        return res.json({
+            isSuccess: false,
+            code: 2000,
+            message: "유저 구글 로그인 실패",
+        });
+    }
 }
 
 exports.socialLogin = async function (id, name){
