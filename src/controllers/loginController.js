@@ -89,7 +89,8 @@ exports.socialLogin = async function (id, name){
         let insertRow = await loginModel.InsertUserInfo(param);
         row = await loginModel.FindUserInfo(id);
     }
-    return row[0].userIdx;
+    console.log(row);
+    return row;
 },
 
 exports.login = async function (req, res){
