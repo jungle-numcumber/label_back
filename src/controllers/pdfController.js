@@ -25,11 +25,12 @@ exports.getPdfAll = async function (req, res) {
 };
 
 exports.getPdfPage = async function (req, res) {
-
+    console.log(1);
     try {
+        console.log('cookie:', req.headers.sessionidforauth);
         const pdfIdx = req.params.pdfIdx;
         const pageNum = req.params.pageNum;
-
+        console.log(pdfIdx);
         const [getPdfPageInfoRows] = await pdfModel.getPdfPageHtml(pdfIdx,pageNum);
 
         return res.json({

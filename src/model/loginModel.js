@@ -33,14 +33,48 @@ async function InsertUserInfo(param) {
 async function FindUserInfo(param) {
   const connection = await pool.getConnection(async (conn) => conn);
   const findUserInfoQuery = `
-              Select * FROM users WHERE userIdx = '${param}'
+              Select * FROM users WHERE userEmail = '${param}'
               `;
   const [findUserInfoRows] = await connection.query(findUserInfoQuery);
   connection.release();
   return findUserInfoRows;
 }
 
+async function FindSession(param) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const findSessionQuery = `
+              Select * FROM sessions WHERE sessionID = '${param}'
+              `
+  const [findSessionRows] = await connection.query(findSessionQuery);
+  connection.release();
+  console.log(findSessionRows);
+  return findSessionRows;
+}
+
+async function ClearSession(param) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const clearSessionQuery = `
+              Delete FROM sessions WHERE sessionID = '${param}'
+              `;
+  const [clearSessionRows] = await connection.query(clearSessionQuery);
+  connection.release();
+  return clearSessionRows;
+}
+
+async function InsertSession(param) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const insertSessionQuery = `
+              INSERT INTO sessions (sessionID) VALUES ('${param}')
+              `;
+  const [insertSessionRows] = await connection.query(insertSessionQuery);
+  connection.release();
+  return insertSessionRows;
+}
+
 module.exports = {
-    InsertUserInfo,
-    FindUserInfo
+  InsertUserInfo,
+  FindUserInfo,
+  FindSession,
+  ClearSession,
+  InsertSession
 }
