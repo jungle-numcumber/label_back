@@ -6,5 +6,4 @@ module.exports = function(app){
     app.get('/highlights/pdfs/:pdfIdx/pages/:pageNum', highlight.getPageHighlight);
 
     app.delete('/highlights/:highlightIdx', highlight.deleteHighlight);
-
 };
