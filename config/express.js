@@ -47,14 +47,15 @@ module.exports = function () {
                     // maxAge: 3000
                 }
             },
-            store: new fileStore(fileStoreOptions)
-        })
-        );
-        require('../src/routes/testRoute')(app);
-        require('../src/routes/pdfRoute')(app);
-        require('../src/routes/highlightRoute')(app);
-        require('../src/routes/loginRoute')(app);
-        
-        return app;
-    };
+        store: new fileStore(fileStoreOptions)
+    })
+    );
+
+    require('../src/routes/testRoute')(app);
+    require('../src/routes/pdfRoute')(app);
+    require('../src/routes/highlightRoute')(app);
+    require('../src/routes/loginRoute')(app);
+    
+    return app;
+};
     
