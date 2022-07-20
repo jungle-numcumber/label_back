@@ -11,7 +11,6 @@ async function argCheck(temp) {
 }
 
 exports.getHighlight = async function (req, res) {
-
     try {
         // userIdx 동적으로 수정 예정
         const userIdx = 1;
@@ -129,7 +128,6 @@ exports.deleteHighlight = async function (req, res) {
             code: 1000,
             message: "하이라이트 삭제 성공",
         })
-
     } catch (err) {
         console.log(`App - delete highlight info Query error\n: ${JSON.stringify(err)}`);
         

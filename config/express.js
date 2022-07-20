@@ -11,15 +11,11 @@ module.exports = function () {
 
     // 미들웨어 압축, 파일 용량 줄임
     app.use(compression());
-
     app.use(express.json());
-
     // restful api 중 form으로 put, delete를 사용하기 위해 씀
     app.use(methodOverride());
-
     // urlencoded 페이로드로 들어오는 요청을 분석, extended true는 qs 모듈을 써서 body parsing
     app.use(express.urlencoded({extended: true}));
-
     // 모든 도메인에서 나의 서버에게 요청을 보낼 수 있게 해줌
     app.use(cors());
 
@@ -44,6 +40,8 @@ module.exports = function () {
     require('../src/routes/testRoute')(app);
     require('../src/routes/pdfRoute')(app);
     require('../src/routes/highlightRoute')(app);
+    require('../src/routes/commitRoute')(app);
+    require('../src/routes/memoRoute')(app);
     require('../src/routes/loginRoute')(app);
 
     return app;
