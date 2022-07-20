@@ -63,6 +63,29 @@ async function socialLogin(id, name){
 // export.clearSession = async function (req, res) {
     
 // }
+
+exports.loginTestButton = async function (req, res) {
+    try {        
+        const userInfo = loginModel.FindUserInfoTest();
+
+        return res.json({
+            result: userInfo,
+            isSuccess: true,
+            code: 1000,
+            message: "유저 정보를 성공적으로 불러왔습니다.",
+        })
+
+    } catch (err) {
+        console.log(`App - get login error\n: ${JSON.stringify(err)}`);
+        
+        return res.json({
+            isSuccess: false,
+            code: 2000,
+            message: "유저 정보 접근 실패",
+        });
+    }
+}
+
 exports.socialLoginCallback = async function (req, res) {
     // res.redirect(url);
     try {

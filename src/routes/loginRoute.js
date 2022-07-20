@@ -9,6 +9,8 @@ module.exports = function (app) {
 
     app.post("/login", loginController.socialLoginCallback);
 
+    app.get("/login/testbutton", loginController.loginTestButton);
+
     app.get("/logout", async function (req, res) {
         var session = req.session;
 

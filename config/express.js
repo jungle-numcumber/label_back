@@ -11,7 +11,6 @@ const fileStoreOptions = {
     reapInterval: 30
 };
 
-
 module.exports = function () {
     const app = express();
 
@@ -25,7 +24,6 @@ module.exports = function () {
     app.use(express.urlencoded({extended: true}));
     
     app.use(express.json());
-    
     
     // 모든 도메인에서 나의 서버에게 요청을 보낼 수 있게 해줌
     app.use(cors());
@@ -55,6 +53,7 @@ module.exports = function () {
     require('../src/routes/pdfRoute')(app);
     require('../src/routes/highlightRoute')(app);
     require('../src/routes/loginRoute')(app);
+    require('../src/routes/editorRoute')(app);
     
     return app;
 };

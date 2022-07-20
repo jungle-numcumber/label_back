@@ -30,6 +30,16 @@ async function InsertUserInfo(param) {
   return insertUserInfoRows;
 }
 
+async function FindUserInfoTest() {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const findUserInfoQuery = `
+              Select * FROM users
+              `;
+  const [findUserInfoRows] = await connection.query(findUserInfoQuery);
+  connection.release();
+  return findUserInfoRows;
+}
+
 async function FindUserInfo(param) {
   const connection = await pool.getConnection(async (conn) => conn);
   const findUserInfoQuery = `
