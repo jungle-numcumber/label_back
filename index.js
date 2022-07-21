@@ -10,6 +10,7 @@ console.log(`${process.env.NODE_ENV} - API Server Start At Port ${port}`);
 
 // editor room websocket connection
 // 클라이언트로부터 connection 이벤트를 받는다. 
+// ** handshake가 완료되면 emitted 된다.
 wss.on('connection', setupWSConnection);
 // 클라이언트로부터 요청을 받는데 header에 upgrade가 포함되어 있으면 upgrade 이벤트가 발생한다.
 server.on('upgrade', (request, socket, head) => {

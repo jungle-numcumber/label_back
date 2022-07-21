@@ -8,7 +8,7 @@ const fileStore = require("session-file-store")(session);
 const bodyParser = require('body-parser');
 
 const fileStoreOptions = {
-    reapInterval: 30
+    reapInterval: 300
 };
 
 module.exports = function () {

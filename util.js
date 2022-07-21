@@ -523,6 +523,7 @@ class WSSharedDoc extends Y.Doc {
         send(this, c, buff)
       })
     }
+    
     this.awareness.on('update', awarenessChangeHandler)
     this.on('update', updateHandler)
     if (isCallbackSet) {
@@ -561,18 +562,26 @@ exports.getYDoc = getYDoc
  */
 const messageListener = (conn, doc, message) => {
   try {
+    // let dec = new TextDecoder("utf-8");
+    // console.log('message:', message)
+    
     const encoder = encoding.createEncoder()
     const decoder = decoding.createDecoder(message)
     const messageType = decoding.readVarUint(decoder)
+    
     switch (messageType) {
       case messageSync:
         encoding.writeVarUint(encoder, messageSync)
         syncProtocol.readSyncMessage(decoder, encoder, doc, null)
+        console.log("message sync !!!!!!!!!!!!!!!!")
         if (encoding.length(encoder) > 1) {
+          console.log("message sync send !!!!!!!!!!!!!!!!")
           send(doc, conn, encoding.toUint8Array(encoder))
         }
         break
-      case messageAwareness: {
+      case messageAwareness: { 
+        console.log("messageAwareness @@@@@@@@@@@@")
+        
         awarenessProtocol.applyAwarenessUpdate(doc.awareness, decoding.readVarUint8Array(decoder), conn)
         break
       }
@@ -631,13 +640,14 @@ const pingTimeout = 30000
  * @param {any} opts
  */
 exports.setupWSConnection = (conn, req, { docName = req.url.slice(1).split('?')[0], gc = true } = {}) => {
+  console.log('setupWSConnection');
   conn.binaryType = 'arraybuffer'
   // get doc, initialize if it does not exist yet
   const doc = getYDoc(docName, gc)
   doc.conns.set(conn, new Set())
   // listen and reply to events
   conn.on('message', /** @param {ArrayBuffer} message */ message => messageListener(conn, doc, new Uint8Array(message)))
-
+  console.log('messageListener');
   // Check if connection is still alive
   let pongReceived = true
   const pingInterval = setInterval(() => {

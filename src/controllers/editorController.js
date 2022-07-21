@@ -17,9 +17,14 @@ const isCallbackSet = require('../model/editorModel').isCallbackSet
 const CALLBACK_DEBOUNCE_WAIT = parseInt(process.env.CALLBACK_DEBOUNCE_WAIT) || 2000
 const CALLBACK_DEBOUNCE_MAXWAIT = parseInt(process.env.CALLBACK_DEBOUNCE_MAXWAIT) || 10000
 
+// WebSocket.readyState 읽기 전용 속성
+// 0: 소켓이 생성됐으나 연결은 아직 개방되지 않음
 const wsReadyStateConnecting = 0
+// 1: 연결이 개방되어 통신할 수 있음
 const wsReadyStateOpen = 1
+// 2: 연결을 닫는 중
 const wsReadyStateClosing = 2 // eslint-disable-line
+// 3: 연결이 닫혔거나, 개방할 수 없음
 const wsReadyStateClosed = 3 // eslint-disable-line
 
 // disable gc when using snapshots!
@@ -103,6 +108,7 @@ class WSSharedDoc extends Y.Doc {
     /**
      * @type {awarenessProtocol.Awareness}
      */
+     console.log("WSSharedDoc constructor");
     this.awareness = new awarenessProtocol.Awareness(this)
     this.awareness.setLocalState(null)
     /**
@@ -110,6 +116,7 @@ class WSSharedDoc extends Y.Doc {
      * @param {Object | null} conn Origin is the connection that made the change
      */
     const awarenessChangeHandler = ({ added, updated, removed }, conn) => {
+      console.log("awarenessChangeHandler");
       const changedClients = added.concat(updated, removed)
       if (conn !== null) {
         const connControlledIDs = /** @type {Set<number>} */ (this.conns.get(conn))
@@ -123,6 +130,7 @@ class WSSharedDoc extends Y.Doc {
       encoding.writeVarUint(encoder, messageAwareness)
       encoding.writeVarUint8Array(encoder, awarenessProtocol.encodeAwarenessUpdate(this.awareness, changedClients))
       const buff = encoding.toUint8Array(encoder)
+      console.log('buffer:', buff);
       this.conns.forEach((_, c) => {
         send(this, c, buff)
       })
@@ -148,6 +156,7 @@ class WSSharedDoc extends Y.Doc {
  */
 const getYDoc = (docname, gc = true) => map.setIfUndefined(docs, docname, () => {
   const doc = new WSSharedDoc(docname)
+  console.log('getYDoc')
   doc.gc = gc
   if (persistence !== null) {
     persistence.bindState(docname, doc)
@@ -163,8 +172,11 @@ exports.getYDoc = getYDoc
  * @param {WSSharedDoc} doc
  * @param {Uint8Array} message
  */
+
+// Q. messageSync와 messageawareness의 차이는 뭘까?
 const messageListener = (conn, doc, message) => {
   try {
+    console.log('messageListener')
     const encoder = encoding.createEncoder()
     const decoder = decoding.createDecoder(message)
     const messageType = decoding.readVarUint(decoder)
@@ -217,10 +229,12 @@ const closeConn = (doc, conn) => {
  * @param {Uint8Array} m
  */
 const send = (doc, conn, m) => {
+  console.log('send')
   if (conn.readyState !== wsReadyStateConnecting && conn.readyState !== wsReadyStateOpen) {
     closeConn(doc, conn)
   }
   try {
+    // err가 null이 아니면 closeConn 실행
     conn.send(m, /** @param {any} err */ err => { err != null && closeConn(doc, conn) })
   } catch (e) {
     closeConn(doc, conn)
@@ -235,16 +249,19 @@ const pingTimeout = 30000
  * @param {any} opts
  */
 exports.setupWSConnection = (conn, req, { docName = req.url.slice(1).split('?')[0], gc = true } = {}) => {
+  console.log('setupWSconnection')
   conn.binaryType = 'arraybuffer'
   // get doc, initialize if it does not exist yet
   const doc = getYDoc(docName, gc)
   doc.conns.set(conn, new Set())
   // listen and reply to events
+  // 클라이언트로부터 메시지를 받으면 message 이벤트 발생
   conn.on('message', /** @param {ArrayBuffer} message */ message => messageListener(conn, doc, new Uint8Array(message)))
 
   // Check if connection is still alive
   let pongReceived = true
   const pingInterval = setInterval(() => {
+    console.log('pingInterval')
     if (!pongReceived) {
       if (doc.conns.has(conn)) {
         closeConn(doc, conn)
@@ -259,11 +276,14 @@ exports.setupWSConnection = (conn, req, { docName = req.url.slice(1).split('?')[
         clearInterval(pingInterval)
       }
     }
+    // pingTimeout: 3초
   }, pingTimeout)
+  // 연결이 끊기면 close 이벤트 발생
   conn.on('close', () => {
     closeConn(doc, conn)
     clearInterval(pingInterval)
   })
+  // 서버로부터 pong을 받았을 때 pong이벤트 발생
   conn.on('pong', () => {
     pongReceived = true
   })
@@ -271,6 +291,7 @@ exports.setupWSConnection = (conn, req, { docName = req.url.slice(1).split('?')[
   // scope
   {
     // send sync step 1
+    console.log('sen sync step 1')
     const encoder = encoding.createEncoder()
     encoding.writeVarUint(encoder, messageSync)
     syncProtocol.writeSyncStep1(encoder, doc)

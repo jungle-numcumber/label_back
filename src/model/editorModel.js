@@ -68,11 +68,14 @@ const callbackRequest = (url, timeout, data) => {
   const req = http.request(options)
   req.on('timeout', () => {
     console.warn('Callback request timed out.')
-    req.abort()
+    // fixed by choi: abort -> destroy, abort method deprecated 
+    // req.abort()
+    req.destroy()
   })
   req.on('error', (e) => {
     console.error('Callback request error.', e)
-    req.abort()
+    // req.abort()
+    req.destroy()
   })
   req.write(data)
   req.end()
