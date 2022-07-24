@@ -5,3 +5,5 @@ log
 config/database.js
 
 config/google.json
+
+sessions/*
