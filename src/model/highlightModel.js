@@ -75,6 +75,7 @@ async function getHighlightPageInfo(bookIdx, pageNum) {
     const [getBookIndexInfoRows] = await connection.query(
         getBookIndexInfoQuery
     );
+    console.log(getBookIndexInfoRows);
     connection.release();
     return getBookIndexInfoRows;
 }

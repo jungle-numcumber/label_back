@@ -3,7 +3,7 @@ const { pool } = require("../../config/database");
 async function getPdfs(userId) {
     const connection = await pool.getConnection(async (conn) => conn);
     const getUserPdfInfoQuery = `
-            SELECT p.pdfIdx, p.pdfName, p.pdfLink
+            SELECT p.pdfIdx, p.pdfName, p.subTitle, p.author, p.firstPageLink, p.totalPage 
             FROM userbooks
                     JOIN pdfs p on userbooks.pdfIdx = p.pdfIdx
             WHERE userbooks.userIdx = ${userId};

@@ -6,6 +6,8 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const fileStore = require("session-file-store")(session);
 
+
+
 module.exports = function () {
     const app = express();
 
@@ -43,6 +45,8 @@ module.exports = function () {
     require('../src/routes/commitRoute')(app);
     require('../src/routes/memoRoute')(app);
     require('../src/routes/loginRoute')(app);
+    require('../src/routes/editorRoute')(app);
+    require('../src/routes/uploadRoute')(app);
 
     return app;
 };

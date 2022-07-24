@@ -35,6 +35,8 @@ async function postMemoInfo(userBookIdx, highlightIdx, data) {
   return postMemoInfoRows;
 }
 
+
+
 // 링크에 접속하고자 하는 사람과, commit 작성 하는 사람이 같음을 인증하는 과정이 추가적으로 필요하다. 
 async function putMemoInfo(memoIdx, data) {
   const connection = await pool.getConnection(async (conn) => conn);
