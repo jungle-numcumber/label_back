@@ -80,12 +80,15 @@ async function getHighlightPageInfo(bookIdx, pageNum) {
     return getBookIndexInfoRows;
 }
 
+
+// delete를 위한 model이지만, put을 이용해서 active를 꺼준다. 
 async function deleteHighlightInfo(highlightIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
     const deleteHighlightInfoQuery = `
-            DELETE FROM highlights WHERE highlightIdx = ${highlightIdx};
-                  `;
-  
+        UPDATE highlights
+        SET active = 0
+        WHERE highlightIdx = ${highlightIdx};
+            `;
     const [deleteHighlightInfoRows] = await connection.query(
         deleteHighlightInfoQuery
     );

@@ -26,16 +26,17 @@ const s3 = new AWS.S3({
 exports.postBook = async function (req, res) {
   try {
       // userIdx 동적으로 수정 예정
-      const pdfIdx = 3;
+      const pdfIdx = 4;
       const {title, subTitle, author} = req.body;
       const htmlOutputDirectoryRoot = "./media/html_result"
       const imgOutputDirectoryRoot = "./media/img_result" 
       const pdfOutputDirectoryRoot = "./media/pdf_result" 
-      const uploadingPdfPath = "./media/pdf_files/osppv3.pdf"
+      const uploadingPdfPath = "./media/pdf_files/osppv5.pdf"
       
       const data = await fs.promises.readFile(uploadingPdfPath);
       const readPdf = await PDFDocument.load(data);
-      const { length } = readPdf.getPages();
+      // const { length } = readPdf.getPages();
+      const length = 53;
       for (let pageNum = 0, n = length; pageNum < n; pageNum += 1) {
         const writePdf = await PDFDocument.create();
         const [page] = await writePdf.copyPages(readPdf, [pageNum]);
@@ -54,7 +55,7 @@ exports.postBook = async function (req, res) {
           await convertPdf2Png(pdfIdx, pdfOutputPath, imgOutputDirectoryRoot);
           await postToS3(imgOutputPath, coverFileName);
           const postUploadInfoRows = await uploadModel.postUploadInfo(length, s3Link(coverFileName), title, subTitle, author);
-          // await removeFile(imgOutputPath);
+          await removeFile(imgOutputPath);
         }
         await postToS3(htmlOutputPath, htmlFileName);
         const postUploadPageInfoRows = await uploadModel.postUploadPageInfo(pdfIdx, pageNum+1, s3Link(htmlFileName));
