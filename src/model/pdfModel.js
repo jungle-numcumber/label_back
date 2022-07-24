@@ -6,6 +6,7 @@ async function getPdfs(userId) {
             SELECT p.pdfIdx, p.pdfName, p.subTitle, p.author, p.firstPageLink, p.totalPage 
             FROM userbooks
                     JOIN pdfs p on userbooks.pdfIdx = p.pdfIdx
+                        ORDER BY updatedAt
             WHERE userbooks.userIdx = ${userId};
                   `;
   
@@ -16,12 +17,11 @@ async function getPdfs(userId) {
     return getUserPdfInfoRows;
 }
 
-async function getPdfPageHtml(pdfIdx, pageNum) {
+async function getPdfPageLink(pdfIdx, pageNum) {
     const connection = await pool.getConnection(async (conn) => conn);
     const getPdfPageInfoQuery = `
             SELECT pdfIdx, pageNum, pageLink FROM bookpages WHERE pdfIdx = ${pdfIdx} AND pageNum = ${pageNum};
-                  `;
-  
+                `;
     const [getPdfPageInfoRows] = await connection.query(
         getPdfPageInfoQuery
     );
@@ -29,9 +29,42 @@ async function getPdfPageHtml(pdfIdx, pageNum) {
     return getPdfPageInfoRows;
 }
 
+async function getLastPdfIdx() {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const getLastPdfIdxQuery = `
+        SELECT pdfIdx FROM pdfs ORDER BY pdfIdx DESC LIMIT 1;
+                `;
+  
+    const [getLastPdfIdx] = await connection.query(
+        getLastPdfIdxQuery
+    );
+    connection.release();
+    // console.log("last :", getLastPdfIdx[0].pdfIdx)
+    return getLastPdfIdx[0].pdfIdx;
+}
+
+async function putRecentlyReadPage(recentlyReadPage, userBookIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const putRecentlyReadPageQuery = `
+        UPDATE userbooks
+        SET recentlyReadPage = '${recentlyReadPage}'
+        WHERE userBookIdx = '${userBookIdx}';
+            `;
+  
+    const [putRecentlyReadPage] = await connection.query(
+        putRecentlyReadPageQuery
+    );
+    connection.release();
+    return putRecentlyReadPage;
+}
+
+
+
 
 
 module.exports = {
     getPdfs,
-    getPdfPageHtml
+    getPdfPageLink, 
+    getLastPdfIdx,
+    putRecentlyReadPage
 }

@@ -1,17 +1,25 @@
 const { pool } = require("../../config/database");
 
-async function postUploadInfo(totalPage, firstPageLink, pdfName, subTitle, author) {
+async function postUploadInfo(totalPage, firstPageLink, pdfName, subTitle, author, userIdx, pdfIdx) {
   console.log(1)
   const connection = await pool.getConnection(async (conn) => conn);
   const postUploadInfoQuery = `
     INSERT INTO pdfs(totalPage, firstPageLink, pdfName, subTitle, author)
     VALUES (${totalPage}, '${firstPageLink}', '${pdfName}', '${subTitle}', '${author}');
   `;
+  const postUserBookInfoQuery = `
+    INSERT INTO userbooks(userIdx, pdfIdx)
+    VALUES (${userIdx}, ${pdfIdx});
+  `
   const postUploadInfoRows = await connection.query(
     postUploadInfoQuery
   );
+
+  const postUserBookInfoRows = await connection.query(
+    postUserBookInfoQuery
+  );
   connection.release();
-  return postUploadInfoRows;
+  return postUploadInfoRows, postUserBookInfoRows;
 }
 
 async function postUploadPageInfo(pdfIdx, pageNum, pageLink) {

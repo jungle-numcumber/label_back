@@ -5,6 +5,7 @@ const AWS_SECRET_ACCESS_KEY = 'A7fU+tHO0GAhN74KmQtTBERxzs/NlnQpLNyfum4L'
 
 const uploadModel = require('../model/uploadModel');
 const highlightModel = require('../model/highlightModel');
+const pdfModel = require('../model/pdfModel');
 
 const fs = require('fs');
 const path = require('path');
@@ -21,23 +22,24 @@ const s3 = new AWS.S3({
   secretAccessKey: AWS_SECRET_ACCESS_KEY,
 });
 
-
-
 exports.postBook = async function (req, res) {
   try {
       // userIdx 동적으로 수정 예정
-      const pdfIdx = 4;
+      const userIdx = 1;
+      // const pdfIdx = 3;
+      const lastPdfIdx = await pdfModel.getLastPdfIdx() ;
+      const pdfIdx = lastPdfIdx + 1
+      console.log(pdfIdx)
       const {title, subTitle, author} = req.body;
       const htmlOutputDirectoryRoot = "./media/html_result"
       const imgOutputDirectoryRoot = "./media/img_result" 
       const pdfOutputDirectoryRoot = "./media/pdf_result" 
-      const uploadingPdfPath = "./media/pdf_files/osppv5.pdf"
+      const uploadingPdfPath = "./media/pdf_files/osppv3.pdf"
       
       const data = await fs.promises.readFile(uploadingPdfPath);
       const readPdf = await PDFDocument.load(data);
-      // const { length } = readPdf.getPages();
-      const length = 53;
-      for (let pageNum = 0, n = length; pageNum < n; pageNum += 1) {
+      const { length } = readPdf.getPages();
+      for (let pageNum = 0, n = 10; pageNum < n; pageNum += 1) {
         const writePdf = await PDFDocument.create();
         const [page] = await writePdf.copyPages(readPdf, [pageNum]);
         writePdf.addPage(page);
@@ -48,13 +50,12 @@ exports.postBook = async function (req, res) {
         const pdfOutputPath = path.join(pdfOutputDirectoryRoot, pdfFileName);
         await fs.promises.writeFile(pdfOutputPath, bytes);
         await convert(pdfOutputPath, htmlOutputPath);
-        console.log("page :", pageNum)
         if (pageNum == 0) { 
           const coverFileName = `book${pdfIdx}_cover_page_1.png`
           const imgOutputPath = path.join(imgOutputDirectoryRoot, coverFileName);
           await convertPdf2Png(pdfIdx, pdfOutputPath, imgOutputDirectoryRoot);
           await postToS3(imgOutputPath, coverFileName);
-          const postUploadInfoRows = await uploadModel.postUploadInfo(length, s3Link(coverFileName), title, subTitle, author);
+          const [postUploadInfoRows, postUserBookInfoRows]  = await uploadModel.postUploadInfo(length, s3Link(coverFileName), title, subTitle, author, userIdx, pdfIdx);
           await removeFile(imgOutputPath);
         }
         await postToS3(htmlOutputPath, htmlFileName);
