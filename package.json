@@ -18,11 +18,16 @@
   },
   "homepage": "https://github.com/sinterhoo/label_test#readme",
   "dependencies": {
+    "axios": "^0.27.2",
     "compression": "^1.7.4",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "express": "^4.18.1",
+    "express-session": "^1.17.3",
+    "googleapis": "^105.0.0",
     "method-override": "^3.0.0",
     "mysql2": "^2.3.3",
-    "nodemon": "^2.0.19"
+    "nodemon": "^2.0.19",
+    "session-file-store": "^1.5.0"
   }
 }
