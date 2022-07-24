@@ -4,7 +4,7 @@ exports.getPdfAll = async function (req, res) {
 
     try {
         const userIdx = req.params.userIdx;
-        const [getUserPdfInfoRows] = await pdfModel.getPdfs(userIdx);
+        const getUserPdfInfoRows = await pdfModel.getPdfs(userIdx);
 
         return res.json({
             result: getUserPdfInfoRows,
