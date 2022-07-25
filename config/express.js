@@ -5,6 +5,8 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const fileStore = require("session-file-store")(session);
+const upload = require('express-fileupload');
+
 
 module.exports = function () {
     const app = express();
@@ -18,6 +20,7 @@ module.exports = function () {
     app.use(express.urlencoded({extended: true}));
     // 모든 도메인에서 나의 서버에게 요청을 보낼 수 있게 해줌
     app.use(cors());
+    app.use(upload());
 
     // cookie and session assign middleware
     app.use(cookieParser());

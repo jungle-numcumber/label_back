@@ -13,6 +13,7 @@ const {PDFDocument}  = require('pdf-lib');
 const pdftohtml = require('pdftohtmljs');
 const pdfToPng = require('pdf-to-png-converter').pdfToPng;
 
+
 //S3연결의 위해 사용
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3({
@@ -23,23 +24,42 @@ const s3 = new AWS.S3({
 });
 
 exports.postBook = async function (req, res) {
+  console.log("req:", req);
+  const {title, subTitle, author} = req.body;
+  console.log("info :", title, subTitle, author);
+  const uploadingPdfPathRoot = "./media/pdf_files/"
+  let uploadingPdfPath;
+  if (req.files) {
+    console.log(req.files.files)
+    var file = req.files.files
+    var filename = file.name
+    console.log(filename);
+    uploadingPdfPath = uploadingPdfPathRoot+filename;
+    await file.mv(uploadingPdfPathRoot+ filename, function(err){
+      if (err) {
+        res.send(err)
+      }})
+    console.log("File uploaded");
+  }
+  
   try {
       // userIdx 동적으로 수정 예정
       const userIdx = 1;
       // const pdfIdx = 3;
-      const lastPdfIdx = await pdfModel.getLastPdfIdx() ;
-      const pdfIdx = lastPdfIdx + 1
-      console.log(pdfIdx)
-      const {title, subTitle, author} = req.body;
       const htmlOutputDirectoryRoot = "./media/html_result"
       const imgOutputDirectoryRoot = "./media/img_result" 
       const pdfOutputDirectoryRoot = "./media/pdf_result" 
-      const uploadingPdfPath = "./media/pdf_files/osppv3.pdf"
-      
+      console.log(uploadingPdfPath);
+      // pdfs에 한권도 없으면 책이 안 생김
+      const lastPdfIdx = await pdfModel.getLastPdfIdx() ;
+      const pdfIdx = lastPdfIdx + 1
+      console.log(pdfIdx)
       const data = await fs.promises.readFile(uploadingPdfPath);
       const readPdf = await PDFDocument.load(data);
-      const { length } = readPdf.getPages();
-      for (let pageNum = 0, n = 10; pageNum < n; pageNum += 1) {
+      // const { length } = readPdf.getPages();
+      const length = 151;
+      for (let pageNum = 0, n = length; pageNum < n; pageNum += 1) {
+        console.log("pageNum :", pageNum);
         const writePdf = await PDFDocument.create();
         const [page] = await writePdf.copyPages(readPdf, [pageNum]);
         writePdf.addPage(page);
@@ -64,12 +84,13 @@ exports.postBook = async function (req, res) {
         await removeFile(htmlOutputPath);
         console.log(`Added ${pdfOutputPath}`);
       }
-    
+      await removeFile(uploadingPdfPath);
       return res.json({
           isSuccess: true,
           code: 1000,
           message: "해당 pdf 업로드 성공",
       })
+      
 
   } catch (err) {
       console.log(`App - post pdf info Query error\n: ${JSON.stringify(err)}`);
@@ -110,7 +131,7 @@ const s3Link = (fileName) => {
 }
 
 
-const convert = async (file, output, preset) => {
+const convert = async (file, output) => {
   const converter = new pdftohtml(file, output)
   converter.progress((ret) => {
     const progress = (ret.current * 100.0) / ret.total
@@ -118,7 +139,8 @@ const convert = async (file, output, preset) => {
   })
 
   try {
-    await converter.convert(preset || 'ipad')
+    await converter.add_options(['--fit-width 650'])
+    await converter.convert()
   } catch (err) {
     console.error(`변경 중에 오류가 있었습니다.: ${err.msg}`)
   }
@@ -151,3 +173,10 @@ const convertPdf2Png = async (bookIdx, pdfDirectory, imgOutputPath) => {
   });
   return pngPage[0].content;
 }
+
+
+const uploadFile = async (uploadingPdfPathRoot, filename) => {
+
+}
+
+

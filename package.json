@@ -26,6 +26,7 @@
     "curl-to-fetch": "^1.2.1",
     "curl-to-node": "^0.1.0",
     "express": "^4.18.1",
+    "express-fileupload": "^1.4.0",
     "express-session": "^1.17.3",
     "fetch": "^1.1.0",
     "fs": "^0.0.1-security",
