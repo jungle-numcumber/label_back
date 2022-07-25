@@ -25,7 +25,7 @@ const s3 = new AWS.S3({
 
 exports.postBook = async function (req, res) {
   console.log("req:", req);
-  const {title, subTitle, author} = req.body;
+  const {title, subTitle, author, maxPages} = req.body;
   console.log("info :", title, subTitle, author);
   const uploadingPdfPathRoot = "./media/pdf_files/"
   let uploadingPdfPath;
@@ -57,8 +57,18 @@ exports.postBook = async function (req, res) {
       const data = await fs.promises.readFile(uploadingPdfPath);
       const readPdf = await PDFDocument.load(data);
       // const { length } = readPdf.getPages();
-      const length = 151;
-      for (let pageNum = 0, n = length; pageNum < n; pageNum += 1) {
+      // console.log(length);
+      let pageCnt; 
+      if (!maxPages) {
+        const { length } = readPdf.getPages();
+        pageCnt = length;
+      } else {
+        pageCnt = maxPages;
+      }
+      const pageLength = pageCnt
+
+      // const length = 151;
+      for (let pageNum = 0, n = pageLength; pageNum < n; pageNum += 1) {
         console.log("pageNum :", pageNum);
         const writePdf = await PDFDocument.create();
         const [page] = await writePdf.copyPages(readPdf, [pageNum]);
@@ -75,7 +85,8 @@ exports.postBook = async function (req, res) {
           const imgOutputPath = path.join(imgOutputDirectoryRoot, coverFileName);
           await convertPdf2Png(pdfIdx, pdfOutputPath, imgOutputDirectoryRoot);
           await postToS3(imgOutputPath, coverFileName);
-          const [postUploadInfoRows, postUserBookInfoRows]  = await uploadModel.postUploadInfo(length, s3Link(coverFileName), title, subTitle, author, userIdx, pdfIdx);
+          const postPdfsInfoRows  = await uploadModel.postPdfsInfo(pageLength, s3Link(coverFileName), title, subTitle, author);
+          const postUploadUserBookInfoRows  = await uploadModel.postUploadUserBookInfo(userIdx, pdfIdx);
           await removeFile(imgOutputPath);
         }
         await postToS3(htmlOutputPath, htmlFileName);
