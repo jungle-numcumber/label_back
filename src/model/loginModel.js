@@ -48,9 +48,11 @@ async function InsertSession (sessionID, userIdx) {
 }
 
 async function getUserInfo(userIdx) {
+  userIdx = 34
   const connection = await pool.getConnection(async (conn) => conn);
+  
   const getUserInfoQuery = `
-      SELECT * FROM users WHERE userIdx = 1;
+      SELECT * FROM users WHERE userIdx = '${userIdx}';
   `;
   const [getUserInfoRows] = await connection.query(
     getUserInfoQuery

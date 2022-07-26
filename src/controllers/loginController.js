@@ -209,7 +209,7 @@ exports.userSessionClear = async function (sessionID) {
 exports.getUserInfo = async function(req, res) { 
     try {
       const userIdx = req.params.userIdx;
-      const getUserInfoRows = await memoModel.getUserInfo(userIdx);
+      const getUserInfoRows = await loginModel.getUserInfo(userIdx);
   
       return res.json({
         result: getUserInfoRows, 
