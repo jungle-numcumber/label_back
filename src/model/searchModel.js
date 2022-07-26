@@ -34,17 +34,15 @@ async function searchBookInfo(userIdx, keyword) {
     const connection = await pool.getConnection(async (conn) => conn);
     const searchHighlightInfoQuery = `
     SELECT *
-    FROM userbooks
-            JOIN pdfs p on userbooks.pdfIdx = p.pdfIdx
-    WHERE userIdx = ?
-    AND (replace(p.pdfName, ' ', '') LIKE concat('%', replace(?, ' ', ''), '%')
-    OR replace(p.author, ' ', '') LIKE concat('%', replace(?, ' ', ''), '%')
-    OR replace(p.subTitle, ' ', '') LIKE concat('%', replace(?, ' ', ''), '%'));
+    FROM pdfs
+    WHERE (replace(pdfName, ' ', '') LIKE concat('%', replace(?, ' ', ''), '%')
+    OR replace(author, ' ', '') LIKE concat('%', replace(?, ' ', ''), '%')
+    OR replace(subTitle, ' ', '') LIKE concat('%', replace(?, ' ', ''), '%'));
                   `;
   
     const [searchHighlightInfoRows] = await connection.query(
         searchHighlightInfoQuery,
-        [userIdx, keyword, keyword, keyword]
+        [keyword, keyword, keyword]
     );
     connection.release();
     return searchHighlightInfoRows;
