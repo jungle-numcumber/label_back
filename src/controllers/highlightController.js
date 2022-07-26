@@ -116,7 +116,7 @@ exports.getPageHighlight = async function (req, res) {
 };
 
 exports.deleteHighlight = async function (req, res) {
-
+    
     try {
         // userIdx 동적으로 수정 예정
         const userIdx = 1;

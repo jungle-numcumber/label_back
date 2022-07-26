@@ -1,5 +1,5 @@
 const { pool } = require("../../config/database");
-
+const MOMENT = require('moment');
 
 
 //특정 user의 commit을 다 가져오는 경우
@@ -26,8 +26,7 @@ async function getUserCommitInfo(userIdx) {
 
 
 //특정 user, 특정 Book의 commit을 다 가져오는 경우
-async function getBookCommitInfo(userBookIdx) {
-  console.log(userBookIdx);
+async function getBookCommitInfo(userIdx, userBookIdx) {
   const connection = await pool.getConnection(async (conn) => conn);
   const getCommitInfoQuery = `
       SELECT commitIdx, 
@@ -36,26 +35,54 @@ async function getBookCommitInfo(userBookIdx) {
       commitMessage, 
       logs, 
       createdAt, 
-      updatedAt
+      editorLog
     FROM commits
-    WHERE userBookIdx = ${userBookIdx};
+    WHERE userBookIdx = ${userBookIdx}
+    AND userIdx = ${userIdx}
   `;
-  // AND commitIdx = ${commitIdx}; 
+
   const [getCommitInfoRows] = await connection.query(
     getCommitInfoQuery
   );
+
+  connection.release();
+  return getCommitInfoRows;
+}
+
+//특정 user, 특정 Book의 commit을 다 가져오는 경우
+async function getBookCommitInfoWithIdx(userCommitIdx) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const getCommitInfoQuery = `
+      SELECT commitIdx, 
+      userIdx,
+      userBookIdx,
+      commitMessage, 
+      logs, 
+      createdAt, 
+      editorLog
+    FROM commits
+    WHERE commitIdx = ${userCommitIdx}
+  `;
+
+  const [getCommitInfoRows] = await connection.query(
+    getCommitInfoQuery
+  );
+
   connection.release();
   return getCommitInfoRows;
 }
 
 
-
 //logs : 추후에 수정해줄 예정
-async function postCommitInfo(userIdx, userBookIdx, commitMessage, logs) {
+async function postCommitInfo(userIdx, userBookIdx, commitMessage, logs, createdAt, editorLog) {
   const connection = await pool.getConnection(async (conn) => conn);
+
+  // const parsedDate = MOMENT.defaultFormat(createdAt);
+  // const parsedDate2 = require('fecha').format(createdAt)
+  // console.log('time', parsedDate, parsedDate2)
   const postCommitInfoQuery = `
-    INSERT INTO commits(userIdx, userBookIdx, commitMessage, logs)
-    VALUES (${userIdx}, ${userBookIdx}, '${commitMessage}', '${logs}')
+    INSERT INTO commits(userIdx, userBookIdx, commitMessage, logs, createdAt, editorLog)
+    VALUES ('${userIdx}', '${userBookIdx}', '${commitMessage}', '${logs}', '${createdAt}', '${editorLog}')
   `;
   const [postCommitInfoRows] = await connection.query(
     postCommitInfoQuery
@@ -81,10 +108,10 @@ async function putCommitInfo(commitIdx, commitMessage) {
 }
 
 
-async function deleteCommitInfo(commitIdx) {
+async function deleteCommitInfo(userIdx, userBookIdx, createdAt) {
   const connection = await pool.getConnection(async (conn) => conn);
   const deleteCommitInfoQuery = `
-    DELETE FROM commits WHERE commitIdx = ${commitIdx};
+    DELETE FROM commits WHERE userIdx = ${userIdx} AND userBookIdx = ${userBookIdx} AND createdAt = ${createdAt};
   `;
   const [deleteCommitInfoRows] = await connection.query(
     deleteCommitInfoQuery
@@ -99,5 +126,6 @@ module.exports = {
   getBookCommitInfo,  
   postCommitInfo, 
   putCommitInfo,
-  deleteCommitInfo 
+  deleteCommitInfo,
+  getBookCommitInfoWithIdx
 }

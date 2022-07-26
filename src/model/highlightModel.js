@@ -39,12 +39,46 @@ async function getHighlightInfo(bookIdx) {
     return getHighlightInfoRows;
 }
 
+async function getCurrentHighlight(userBookIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    // console.log(userBookIdx)
+    const getHighlightInfoQuery = `
+        SELECT *
+        FROM highlights
+        WHERE userBookIdx = ${userBookIdx}
+        AND active = 1
+        `;
+  
+    const [getHighlightInfoRows] = await connection.query(
+        getHighlightInfoQuery
+    );
+    // console.log(getHighlightInfoRows)
+    connection.release();
+    return getHighlightInfoRows;
+}
+
 async function postHighlightInfo(bookIdx, pageNum, startLine, startOffset, startNode, endLine, endOffset, endNode, data) {
     const connection = await pool.getConnection(async (conn) => conn);
     const postHighlightInfoQuery = `
             INSERT INTO highlights(userBookIdx, pageNum, startLine, startOffset, startNode, endLine, endOffset, endNode, data)
             VALUES (${bookIdx}, ${pageNum}, '${startLine}', ${startOffset}, ${startNode}, '${endLine}', ${endOffset}, ${endNode}, '${data}');
-                  `;
+            `;
+  
+    const [postHighlightInfoRows] = await connection.query(
+        postHighlightInfoQuery
+    );
+    connection.release();
+    return postHighlightInfoRows;
+}
+
+async function putHighlightInfo(bookIdx, pageNum, startLine, startOffset, startNode, endLine, endOffset, endNode, data) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    
+    const postHighlightInfoQuery = `
+        UPDATE highlights
+        SET commitMessage = '${commitMessage}'
+        WHERE commitIdx = ${commitIdx};
+    `;
   
     const [postHighlightInfoRows] = await connection.query(
         postHighlightInfoQuery
@@ -102,5 +136,7 @@ module.exports = {
     getHighlightInfo,
     postHighlightInfo,
     getHighlightPageInfo,
-    deleteHighlightInfo
+    deleteHighlightInfo,
+    putHighlightInfo,
+    getCurrentHighlight
 }
