@@ -23,17 +23,17 @@ async function InsertUserInfo(param) {
   const connection = await pool.getConnection(async (conn) => conn);
 
   const insertUserInfoQuery = `
-              INSERT INTO users (userEmail, userName) VALUES ('${param.userEmail}', '${param.userName}')
+              INSERT INTO users (userEmail, userName, userPhoto, userLocale, socialType, commitGrass) VALUES ('${param.userEmail}', '${param.userName}', '${param.userPhoto}', '${param.userLocale}', '${param.socialType}', '${param.commitGrass}')
               `;
   const [insertUserInfoRows] = await connection.query(insertUserInfoQuery);
   connection.release();
   return insertUserInfoRows;
 }
 
-async function FindUserInfo(param) {
+async function FindUserInfo(email) {
   const connection = await pool.getConnection(async (conn) => conn);
   const findUserInfoQuery = `
-              Select * FROM users WHERE userIdx = '${param}'
+              SELECT * FROM users WHERE userEmail = '${email}'
               `;
   const [findUserInfoRows] = await connection.query(findUserInfoQuery);
   connection.release();
@@ -42,5 +42,6 @@ async function FindUserInfo(param) {
 
 module.exports = {
     InsertUserInfo,
-    FindUserInfo
+    FindUserInfo, 
+    // InsertSession //이거 만들어야 함. 
 }

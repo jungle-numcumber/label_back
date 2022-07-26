@@ -1,11 +1,11 @@
 const pdfModel = require('../model/pdfModel');
 const highlightModel = require('../model/highlightModel');
 
-exports.getPdfAll = async function (req, res) {
+exports.getPdfUserAll = async function (req, res) {
 
     try {
         const userIdx = req.params.userIdx;
-        const getUserPdfInfoRows = await pdfModel.getPdfs(userIdx);
+        const getUserPdfInfoRows = await pdfModel.getUserPdfs(userIdx);
 
         return res.json({
             result: getUserPdfInfoRows,

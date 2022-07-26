@@ -24,30 +24,63 @@ async function googleLogin(tokens) {
     // Fetch the user's profile with the access token and bearer
     console.log(tokens);
     const googleUser = await axios
-    .get(
-    `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${tokens.access_token}`,
-    {
-        headers: {
-        Authorization: `Bearer ${tokens.id_token}`,
-        },
-    },
-    )
+    // .get(
+    // `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${tokens.access_token}`,
+    // ;
+    //     headers: {
+    //     Authorization: `Bearer ${tokens.id_token}`,
+    //     },
+    // },
+    // )
+    .get(`https://www.googleapis.com/oauth2/v3/userinfo?&access_token=${tokens}`)
     .then(res => res.data)
     .catch(error => {
     throw new Error(error.message);
     });
-
+    
     return googleUser;
 }
 
+async function socialLogin(email, name, picture, locale){
+    console.log("login 함수가 실행됩니다.");
+    let row = await loginModel.FindUserInfo(email);
+    console.log('row:', row);
+    /* 유저가 존재하면 row is not Null*/
+    if (row.length > 0) {
+    } else {
+        const param = {
+            userEmail: email,
+            userName: name,
+            userPicture: picture,
+            userLocale: locale,
+            socialType: 1, 
+            commitGrass: ('0'*364)
+        }
+        console.log('param:', param);
+
+        let insertRow = await loginModel.InsertUserInfo(param);
+        row = await loginModel.FindUserInfo(id);
+    }
+    console.log('hello', row);
+    return row;
+}
+
+// export.clearSession = async function (req, res) {
+    
+// }
 exports.socialLoginCallback = async function (req, res) {
     // res.redirect(url);
     try {
         const googleUser = await googleLogin(req.body.tokens);
-        const userIdx = await socialLogin(googleUser.email, googleUser.name);
+        console.log('googleUser:',googleUser);
+        let userIdx = await socialLogin(googleUser.email, googleUser.name, googleUser.picture, googleUser.locale);
         console.log("success login");
-        req.session.userId = userIdx;
+        userIdx = Math.random().toString(36).substring(2, 11);/// 이렇게 만든 이유?
+        console.log("userIdx :", userIdx);
+        req.session.userId = userIdx[0].userIdx;
         req.session.is_logined = true;
+        
+        loginModel.InsertSession(userIdx);// 이 단계 없음. 클라이언트 쿠키에 insert?
 
         return res.json({
             result: userIdx,
@@ -67,25 +100,27 @@ exports.socialLoginCallback = async function (req, res) {
     }
 }
 
-exports.socialLogin = async function (id, name){
-    console.log("login 함수가 실행됩니다.");
-
-    let row = await loginModel.FindUserInfo(id);
-    console.log(row);
-    /* 유저가 존재하면 row is not Null*/
-    if (row.length > 0) {
-    } else {
-        const param = {
-            userEmail: id,
-            userName: name
-        }
-
-        let insertRow = await loginModel.InsertUserInfo(param);
-        row = await loginModel.FindUserInfo(id);
-    }
-    console.log(row);
-    return row;
-},
+// exports.socialLogin = async function (email, name, picture, local){
+//     console.log("login 함수가 실행됩니다.");
+//     let row = await loginModel.FindUserInfo(email);
+//     console.log(row);
+//     /* 유저가 존재하면 row is not Null*/
+//     if (row.length > 0) {
+//     } else {
+//         const param = {
+//             userEmail: email,
+//             userName: name,
+//             userPicture: picture,
+//             userLocal: local,
+//             socialType: 1, 
+//             commitGrass: ('0'*364)
+//         }
+//         let insertRow = await loginModel.InsertUserInfo(param);
+//         row = await loginModel.FindUserInfo(email);
+//     }
+//     console.log(row);
+//     return row;
+// }
 
 exports.login = async function (req, res){
     console.log("login 함수가 실행됩니다.");
@@ -133,4 +168,32 @@ exports.signup = async function (req, res){
     await res.json(rows);
 }
 
+exports.authTest = async function (res, req) {
+    
+}
+exports.userAuthorize = async function (res,req,sessionID) {
+    let sessionIDIsExist = await loginModel.FindSession(sessionID);
+    console.log('sessionIDIsExist:', sessionIDIsExist);
+    if (sessionIDIsExist.length !== 0) {
+        console.log("true");
+        return res.json({
+            isSuccess: true,
+            code: 1000,
+            message: "유저 인가 완료",
+        });
+    } else {
+        console.log("false");
+        return res.json({
+            isSuccess: false,
+            code: 2000,
+            message: "유저 인가 실패",
+        });
+    }
+}
 
+exports.userSessionClear = async function (sessionID) {
+    const sessionIDIsExist = loginModel.FindSession(sessionID);
+    if (sessionIDIsExist) {
+        loginModel.ClearSession(sessionID);
+    }
+}

@@ -1,6 +1,6 @@
 const { pool } = require("../../config/database");
 
-async function getPdfs(userId) {
+async function getUserPdfs(userId) {
     const connection = await pool.getConnection(async (conn) => conn);
     const getUserPdfInfoQuery = `
             SELECT p.pdfIdx, p.pdfName, p.subTitle, p.author, p.firstPageLink, p.totalPage 
@@ -63,7 +63,7 @@ async function putRecentlyReadPage(recentlyReadPage, userBookIdx) {
 
 
 module.exports = {
-    getPdfs,
+    getUserPdfs,
     getPdfPageLink, 
     getLastPdfIdx,
     putRecentlyReadPage
