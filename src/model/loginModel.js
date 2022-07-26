@@ -40,8 +40,21 @@ async function FindUserInfo(email) {
   return findUserInfoRows;
 }
 
+async function InsertSession (sessionID, userIdx) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const findUserInfoQuery = `
+              INSERT INTO sessions (sessionID, userIdx) VALUES ('${sessionID}', '${userIdx}')
+              `;  
+
+
+}
+
+
+
+
+
 module.exports = {
     InsertUserInfo,
     FindUserInfo, 
-    // InsertSession //이거 만들어야 함. 
+    InsertSession //이거 만들어야 함. 
 }

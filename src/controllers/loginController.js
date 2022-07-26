@@ -75,12 +75,13 @@ exports.socialLoginCallback = async function (req, res) {
         console.log('googleUser:',googleUser);
         let userIdx = await socialLogin(googleUser.email, googleUser.name, googleUser.picture, googleUser.locale);
         console.log("success login");
-        userIdx = Math.random().toString(36).substring(2, 11);/// 이렇게 만든 이유?
+        const sessionID = Math.random().toString(36).substring(2, 11);
         console.log("userIdx :", userIdx);
         req.session.userId = userIdx[0].userIdx;
         req.session.is_logined = true;
         
-        loginModel.InsertSession(userIdx);// 이 단계 없음. 클라이언트 쿠키에 insert?
+        loginModel.InsertSession(sessionID, userIdx);// session을 메모리로 넣어주는 과정. 
+
 
         return res.json({
             result: userIdx,
