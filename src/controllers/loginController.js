@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const loginController = require('../controllers/loginController');
 const google = require('googleapis');
 
+
 // login
 // 궁금한 부분: 
 // 1. 시간이 지나면 세션기록 지워져야햐나? 사용자가 로그아웃 하지않으면 세션 계속남아있는거 처리 어떻게?
@@ -41,6 +42,12 @@ async function googleLogin(tokens) {
     return googleUser;
 }
 
+let GrassZeros = ""
+for (let i = 0, n = 364; i < n ; i += 1) {
+    GrassZeros += "0"
+}
+
+
 async function socialLogin(email, name, picture, locale){
     console.log("login 함수가 실행됩니다.");
     let row = await loginModel.FindUserInfo(email);
@@ -51,10 +58,10 @@ async function socialLogin(email, name, picture, locale){
         const param = {
             userEmail: email,
             userName: name,
-            userPicture: picture,
+            userPhoto: picture,
             userLocale: locale,
             socialType: 1, 
-            commitGrass: ('0'*364)
+            commitGrass: `${GrassZeros}`
         }
         console.log('param:', param);
 
@@ -92,7 +99,6 @@ exports.socialLoginCallback = async function (req, res) {
 
     } catch (err) {
         console.log(`App - get login error\n: ${JSON.stringify(err)}`);
-        
         return res.json({
             isSuccess: false,
             code: 2000,
@@ -198,3 +204,25 @@ exports.userSessionClear = async function (sessionID) {
         loginModel.ClearSession(sessionID);
     }
 }
+
+
+exports.getUserInfo = async function(req, res) { 
+    try {
+      const userIdx = req.params.userIdx;
+      const getUserInfoRows = await memoModel.getUserInfo(userIdx);
+  
+      return res.json({
+        result: getUserInfoRows, 
+        isSuccess : true, 
+        code : 1000, 
+        message: "user 정보 조회 성공", 
+      })
+    } catch (err) { 
+      console.log(`App - get user info Query error\n: ${JSON.stringify(err)}`);
+      return res.json({
+        isSuccess: false, 
+        code: 2000, 
+        message: "user 정보 조회 실패",
+      });
+    }
+  };

@@ -45,16 +45,25 @@ async function InsertSession (sessionID, userIdx) {
   const findUserInfoQuery = `
               INSERT INTO sessions (sessionID, userIdx) VALUES ('${sessionID}', '${userIdx}')
               `;  
-
-
 }
 
-
+async function getUserInfo(userIdx) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const getUserInfoQuery = `
+      SELECT * FROM users WHERE userIdx = 1;
+  `;
+  const [getUserInfoRows] = await connection.query(
+    getUserInfoQuery
+  );
+  connection.release();
+  return getUserInfoRows;
+}
 
 
 
 module.exports = {
     InsertUserInfo,
     FindUserInfo, 
-    InsertSession //이거 만들어야 함. 
+    InsertSession, //이거 만들어야 함. 
+    getUserInfo
 }
