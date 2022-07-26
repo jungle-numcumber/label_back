@@ -47,10 +47,9 @@ for (let i = 0, n = 364; i < n ; i += 1) {
     GrassZeros += "0"
 }
 
-
 async function socialLogin(email, name, picture, locale){
     console.log("login 함수가 실행됩니다.");
-    let row = await loginModel.FindUserInfo(email);
+    let row = await loginModel.findUserInfo(email);
     console.log('row:', row);
     /* 유저가 존재하면 row is not Null*/
     if (row.length > 0) {
@@ -65,8 +64,8 @@ async function socialLogin(email, name, picture, locale){
         }
         console.log('param:', param);
 
-        let insertRow = await loginModel.InsertUserInfo(param);
-        row = await loginModel.FindUserInfo(id);
+        const insertRow = await loginModel.insertUserInfo(param);
+        row = await loginModel.findUserInfo(email);
     }
     console.log('hello', row);
     return row;
@@ -80,14 +79,16 @@ exports.socialLoginCallback = async function (req, res) {
     try {
         const googleUser = await googleLogin(req.body.tokens);
         console.log('googleUser:',googleUser);
-        let userIdx = await socialLogin(googleUser.email, googleUser.name, googleUser.picture, googleUser.locale);
+        const [userInfo] = await socialLogin(googleUser.email, googleUser.name, googleUser.picture, googleUser.locale);
+        console.log("userInfo :", userInfo);
         console.log("success login");
         const sessionID = Math.random().toString(36).substring(2, 11);
+        const userIdx = userInfo.userIdx
         console.log("userIdx :", userIdx);
-        req.session.userId = userIdx[0].userIdx;
+        req.session.userId = userIdx;
         req.session.is_logined = true;
         
-        loginModel.InsertSession(sessionID, userIdx);// session을 메모리로 넣어주는 과정. 
+        const sessionInfoRow = loginModel.insertSession(sessionID, userIdx);// session을 메모리로 넣어주는 과정. 
 
 
         return res.json({
@@ -98,7 +99,7 @@ exports.socialLoginCallback = async function (req, res) {
         })
 
     } catch (err) {
-        console.log(`App - get login error\n: ${JSON.stringify(err)}`);
+        console.log(`App - google login error\n: ${JSON.stringify(err)}`);
         return res.json({
             isSuccess: false,
             code: 2000,
@@ -122,7 +123,7 @@ exports.socialLoginCallback = async function (req, res) {
 //             socialType: 1, 
 //             commitGrass: ('0'*364)
 //         }
-//         let insertRow = await loginModel.InsertUserInfo(param);
+//         let insertRow = await loginModel.insertUserInfo(param);
 //         row = await loginModel.FindUserInfo(email);
 //     }
 //     console.log(row);
@@ -133,7 +134,7 @@ exports.login = async function (req, res){
     console.log("login 함수가 실행됩니다.");
     let body = req.body;
     var param = body.userId
-    var row = await loginModel.FindUserInfo(param);
+    var row = await loginModel.findUserInfo(param);
     console.log(row);
     let dbPassword = row[0].userPwd;
     let inputPassword = body.userPwd;
@@ -171,15 +172,14 @@ exports.signup = async function (req, res){
         userPwd : hashPassword,
         salt : salt,
     }
-    var rows = await loginModel.InsertUserInfo(param);
+    var rows = await loginModel.insertUserInfo(param);
     await res.json(rows);
 }
 
 exports.authTest = async function (res, req) {
-    
 }
 exports.userAuthorize = async function (res,req,sessionID) {
-    let sessionIDIsExist = await loginModel.FindSession(sessionID);
+    let sessionIDIsExist = await loginModel.findSession(sessionID);
     console.log('sessionIDIsExist:', sessionIDIsExist);
     if (sessionIDIsExist.length !== 0) {
         console.log("true");
@@ -199,7 +199,7 @@ exports.userAuthorize = async function (res,req,sessionID) {
 }
 
 exports.userSessionClear = async function (sessionID) {
-    const sessionIDIsExist = loginModel.FindSession(sessionID);
+    const sessionIDIsExist = loginModel.findSession(sessionID);
     if (sessionIDIsExist) {
         loginModel.ClearSession(sessionID);
     }

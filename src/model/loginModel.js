@@ -19,7 +19,7 @@
 
 const { pool } = require("../../config/database");
 
-async function InsertUserInfo(param) {
+async function insertUserInfo(param) {
   const connection = await pool.getConnection(async (conn) => conn);
 
   const insertUserInfoQuery = `
@@ -30,7 +30,7 @@ async function InsertUserInfo(param) {
   return insertUserInfoRows;
 }
 
-async function FindUserInfo(email) {
+async function findUserInfo(email) {
   const connection = await pool.getConnection(async (conn) => conn);
   const findUserInfoQuery = `
               SELECT * FROM users WHERE userEmail = '${email}'
@@ -40,15 +40,18 @@ async function FindUserInfo(email) {
   return findUserInfoRows;
 }
 
-async function InsertSession (sessionID, userIdx) {
+async function insertSession (sessionID, userIdx) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const findUserInfoQuery = `
+  const  insertSessionQuery= `
               INSERT INTO sessions (sessionID, userIdx) VALUES ('${sessionID}', '${userIdx}')
               `;  
+  const [insertSessionInfoRows] = await connection.query(insertSessionQuery);
+  connection.release();
+  return insertSessionInfoRows;
 }
 
 async function getUserInfo(userIdx) {
-  userIdx = 34
+  userIdx = 37
   const connection = await pool.getConnection(async (conn) => conn);
   
   const getUserInfoQuery = `
@@ -64,8 +67,8 @@ async function getUserInfo(userIdx) {
 
 
 module.exports = {
-    InsertUserInfo,
-    FindUserInfo, 
-    InsertSession, //이거 만들어야 함. 
+    insertUserInfo,
+    findUserInfo, 
+    insertSession,
     getUserInfo
 }
