@@ -1,6 +1,33 @@
 const pdfModel = require('../model/pdfModel');
 const highlightModel = require('../model/highlightModel');
 
+
+exports.getPdfAll = async function (req, res) {
+    try {
+        const userIdx = req.params.userIdx;
+        const getPdfAllInfoRows = await pdfModel.getPdfAll(userIdx);
+
+        return res.json({
+            result: getPdfAllInfoRows,
+            isSuccess: true,
+            code: 1000,
+            message: "모든 pdf 조회 성공",
+        })
+
+    } catch (err) {
+        console.log(`App - get all pdf info Query error\n: ${JSON.stringify(err)}`);
+        
+        return res.json({
+            isSuccess: false,
+            code: 2000,
+            message: "모든 pdf 조회 실패",
+        });
+    }
+};
+
+
+
+
 exports.getPdfUserAll = async function (req, res) {
 
     try {

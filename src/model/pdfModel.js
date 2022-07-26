@@ -1,5 +1,35 @@
 const { pool } = require("../../config/database");
 
+async function getPdfPageLink(pdfIdx, pageNum) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const getPdfPageInfoQuery = `
+            SELECT pdfIdx, pageNum, pageLink FROM bookpages WHERE pdfIdx = ${pdfIdx} AND pageNum = ${pageNum};
+                `;
+    const [getPdfPageInfoRows] = await connection.query(
+        getPdfPageInfoQuery
+    );
+    connection.release();
+    return getPdfPageInfoRows;
+}
+
+
+async function getPdfAll(userIdx) {
+    userIdx = 1;
+    const connection = await pool.getConnection(async (conn) => conn);
+    const getUserPdfInfoQuery = `
+            SELECT *
+            FROM pdfs
+            ORDER BY hits;
+                  `;
+  
+    const [getUserPdfInfoRows] = await connection.query(
+        getUserPdfInfoQuery
+    );
+    connection.release();
+    return getUserPdfInfoRows;
+}
+
+
 async function getUserPdfs(userId) {
     const connection = await pool.getConnection(async (conn) => conn);
     const getUserPdfInfoQuery = `
@@ -63,6 +93,7 @@ async function putRecentlyReadPage(recentlyReadPage, userBookIdx) {
 
 
 module.exports = {
+    getPdfAll, 
     getUserPdfs,
     getPdfPageLink, 
     getLastPdfIdx,
