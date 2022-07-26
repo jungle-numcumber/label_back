@@ -57,6 +57,35 @@ async function getCurrentHighlight(userBookIdx) {
     return getHighlightInfoRows;
 }
 
+async function getLogHighlight(logs) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    // console.log(userBookIdx)
+    let logString = '('
+    for(i = 0; i < logs.length; i++) {
+        logString += "'"
+        logString += String(logs[i]) 
+        if (i === logs.length - 1) {
+            logString += "'"
+        } else {
+            logString += "',"
+        }
+    }
+    logString += ')';
+    console.log(logString)
+    const getHighlightInfoQuery = `
+        SELECT *
+        FROM highlights
+        WHERE highlightIdx IN ${logString}
+        `;
+  
+    const [getHighlightInfoRows] = await connection.query(
+        getHighlightInfoQuery
+    );
+    // console.log(getHighlightInfoRows)
+    connection.release();
+    return getHighlightInfoRows;
+}
+
 async function postHighlightInfo(bookIdx, pageNum, startLine, startOffset, startNode, endLine, endOffset, endNode, data) {
     const connection = await pool.getConnection(async (conn) => conn);
     const postHighlightInfoQuery = `
@@ -138,5 +167,6 @@ module.exports = {
     getHighlightPageInfo,
     deleteHighlightInfo,
     putHighlightInfo,
-    getCurrentHighlight
+    getCurrentHighlight,
+    getLogHighlight
 }
