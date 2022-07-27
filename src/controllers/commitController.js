@@ -42,9 +42,17 @@ exports.getBookCommit = async function(req, res) {
   try {
 
     const userIdx = 58;
-    
+    const temp = req.params.userIdx;
     const pdfIdx = req.params.pdfIdx;
-    // console.log(userIdx,userBookIdx)
+    console.log(pdfIdx);
+    if (pdfIdx === undefined || pdfIdx === '' || pdfIdx === null) {
+      return res.json({ 
+        isSuccess : false, 
+        code : 2601, 
+        message: "pdfIdx를 넣어주세요", 
+      })
+    }
+    // console.log(userIdx,pdfIdx);
     const userBookIdx = await searchModel.getBookIndexInfo(userIdx, pdfIdx);
     // console.log(userBookIdx);
     const commits = await commitModel.getBookCommitInfo(userIdx, String(userBookIdx[0]['userBookIdx']));
