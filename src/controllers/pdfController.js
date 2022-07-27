@@ -52,12 +52,14 @@ exports.getPdfUserAll = async function (req, res) {
     }
 };
 
+
+// app.get('/pdfs/:pdfIdx/pages/:pageNum',  pdf.getPdfPage);
 exports.getPdfPage = async function (req, res) {
 
     try {
         const pdfIdx = req.params.pdfIdx;
         const pageNum = req.params.pageNum;
-        const userIdx = 1; 
+        const userIdx = 58; 
 
         const [getPdfPageInfoRows] = await pdfModel.getPdfPageLink(pdfIdx,pageNum);
         const [getBookIndexRows] = await highlightModel.getBookIndexInfo(userIdx, getPdfPageInfoRows.pdfIdx)

@@ -17,7 +17,7 @@ exports.getAllCommit = async function(req, res) {
   try {
     //회원가입 추가 후, userIdx 수정 예정 
     // const userIdx = req.params.userIdx;
-    const userIdx = 1;
+    const userIdx = 58;
     const getUserCommitInfoRows = await commitModel.getUserCommitInfo(userIdx);
 
     return res.json({
@@ -41,7 +41,7 @@ exports.getBookCommit = async function(req, res) {
   try {
     //회원가입 추가 후, userIdx 수정 예정 
     // const userIdx = req.params.userIdx;
-    const userIdx = 1;
+    const userIdx = 58;
     const pdfIdx = req.params.pdfIdx;
     const [userBookIdx] = await highlightModel.getBookIndexInfo(userIdx, pdfIdx);
     const getBookCommitInfoRows = await commitModel.getBookCommitInfo(userBookIdx.userBookIdx);
@@ -65,7 +65,7 @@ exports.getBookCommit = async function(req, res) {
 
 exports.postCommit = async function(req, res) {
   try{ 
-    const userIdx = 1;
+    const userIdx = 58;
     const logs = '[]'; 
     // const {pdfIdx, commitMessage, logs} = req.body;
     const {pdfIdx, commitMessage} = req.body;
@@ -103,7 +103,7 @@ exports.postCommit = async function(req, res) {
 //app.put('/users/:userIdx/commits/:commitIdx', commit.putCommit);
 exports.putCommit = async function (req, res) { 
   try{
-    const userIdx = 1;
+    const userIdx = 58;
     const commitIdx = req.params.commitIdx;
     const commitMessage = req.body.commitMessage;
     
@@ -140,7 +140,7 @@ exports.putCommit = async function (req, res) {
 exports.deleteCommit = async function (req, res) { 
   try { 
     // 본인인지 인증하는 절차 필요?
-    const userIdx = 1;
+    const userIdx = 58;
     const commitIdx = req.params.commitIdx;
     const deleteHighlightInfoRows = await commitModel.deleteCommitInfo(commitIdx);
 

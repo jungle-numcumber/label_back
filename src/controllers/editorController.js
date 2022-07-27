@@ -5,7 +5,7 @@ exports.getPageHighlightMemo = async function (req, res) {
 
   try {
       // userIdx 동적으로 수정 예정
-      const userIdx = 1;
+      const userIdx = 58;
       const pdfIdx = req.params.pdfIdx;  
       const pageNum = req.params.pageNum;    
       const [bookIdx] = await highlightModel.getBookIndexInfo(userIdx, pdfIdx);

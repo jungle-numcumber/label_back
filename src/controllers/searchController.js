@@ -3,7 +3,7 @@ const searchModel = require('../model/searchModel');
 exports.searchHighlight = async function (req, res) {
     try {
         // userIdx 동적으로 수정 예정
-        const userIdx = 1;
+        const userIdx = 58;
         const pdfIdx = req.params.pdfIdx;
         const keyword = req.query.keyword;      
         const [bookIdx] = await searchModel.getBookIndexInfo(userIdx, pdfIdx);
@@ -30,7 +30,7 @@ exports.searchHighlight = async function (req, res) {
 exports.searchBooks = async function (req, res) {
     try {
         // userIdx 동적으로 수정 예정
-        const userIdx = 1;
+        const userIdx = 58;
         const keyword = req.query.keyword;
         const searchHighlightInfoRows = await searchModel.searchBookInfo(userIdx,keyword);
         

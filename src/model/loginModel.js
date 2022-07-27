@@ -23,7 +23,7 @@ async function insertUserInfo(param) {
   const connection = await pool.getConnection(async (conn) => conn);
 
   const insertUserInfoQuery = `
-              INSERT INTO users (userEmail, userName, userPhoto, userLocale, socialType, commitGrass) VALUES ('${param.userEmail}', '${param.userName}', '${param.userPhoto}', '${param.userLocale}', '${param.socialType}', '${param.commitGrass}')
+              INSERT INTO users (userEmail, userName, hashedPW, salt, userPhoto, userLocale, socialType, commitGrass) VALUES ('${param.userEmail}', '${param.userName}', '${param.hashedPW}', '${param.salt}', '${param.userPhoto}', '${param.userLocale}', '${param.socialType}', '${param.commitGrass}')
               `;
   const [insertUserInfoRows] = await connection.query(insertUserInfoQuery);
   connection.release();
@@ -64,11 +64,56 @@ async function getUserInfo(userIdx) {
   return getUserInfoRows;
 }
 
+async function checkSession(userIdx){
+  let inSession = false; 
+  const connection = await pool.getConnection(async (conn) => conn);
+  const getSessionInfoQuery = `
+      SELECT * FROM sessions WHERE userIdx = '${userIdx}';
+  `;
+  const [getSessionInfoRows] = await connection.query(
+    getSessionInfoQuery
+  );
+  console.log("getSessionInfoRows :", getSessionInfoRows)
+  const inSessionLength = await getSessionInfoRows.length
+  if (inSessionLength > 0){
+    inSession = true;
+  }
+  connection.release();
+  return inSession;
+}
+
+async function destroyDbSession(userIdx){
+  const connection = await pool.getConnection(async (conn) => conn);
+  const getSessionInfoQuery = `
+      DELETE FROM sessions WHERE userIdx = ${userIdx};
+  `;
+  const [getSessionInfoRows] = await connection.query(
+    getSessionInfoQuery
+  );
+  connection.release();
+  return getSessionInfoRows
+}
+
+async function getUserIdxWithSessionID(sessionID){
+  const connection = await pool.getConnection(async (conn) => conn);
+  const getUserSessionInfoQuery = `
+    SELECT userIdx FROM sessions WHERE sessionID = '${sessionID}'
+  `;
+  const [getUserSessionInfoRows] = await connection.query(
+    getUserSessionInfoQuery
+  );
+  connection.release();
+  return getUserSessionInfoRows
+}
+
 
 
 module.exports = {
+    getUserIdxWithSessionID, 
     insertUserInfo,
     findUserInfo, 
     insertSession,
-    getUserInfo
+    getUserInfo, 
+    checkSession, 
+    destroyDbSession
 }

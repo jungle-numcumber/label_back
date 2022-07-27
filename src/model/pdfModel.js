@@ -14,7 +14,7 @@ async function getPdfPageLink(pdfIdx, pageNum) {
 
 
 async function getPdfAll(userIdx) {
-    userIdx = 1;
+    userIdx = 58;
     const connection = await pool.getConnection(async (conn) => conn);
     const getUserPdfInfoQuery = `
             SELECT *
