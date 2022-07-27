@@ -33,7 +33,7 @@ async function getPdfAll(userIdx) {
 async function getUserPdfs(userId) {
     const connection = await pool.getConnection(async (conn) => conn);
     const getUserPdfInfoQuery = `
-            SELECT p.pdfIdx, p.pdfName, p.subTitle, p.author, p.firstPageLink, p.totalPage 
+            SELECT p.pdfIdx, p.pdfName, p.subTitle, p.author, p.firstPageLink, p.totalPage, recentlyReadPage, userbooks.updatedAt 
             FROM userbooks
                     JOIN pdfs p on userbooks.pdfIdx = p.pdfIdx
             WHERE userbooks.userIdx = ${userId}
