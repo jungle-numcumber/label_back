@@ -44,7 +44,7 @@ exports.postBook = async function (req, res) {
   
   try {
       // userIdx 동적으로 수정 예정
-      const userIdx = 1;
+      const userIdx = 58;
       // const pdfIdx = 3;
       const htmlOutputDirectoryRoot = "./media/html_result"
       const imgOutputDirectoryRoot = "./media/img_result" 

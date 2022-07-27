@@ -29,7 +29,7 @@ async function getHighlightInfo(bookIdx) {
             createdAt,
             updatedAt
         FROM highlights
-        WHERE userBookIdx = ${bookIdx};
+        WHERE userBookIdx = ${bookIdx} ;
                   `;
   
     const [getHighlightInfoRows] = await connection.query(
@@ -133,7 +133,7 @@ async function getHighlightPageInfo(bookIdx, pageNum) {
             createdAt,
             updatedAt
         FROM highlights
-        WHERE userBookIdx = ${bookIdx} AND pageNum = ${pageNum};
+        WHERE userBookIdx = ${bookIdx} AND pageNum = ${pageNum} AND active = 1;
                   `;
   
     const [getBookIndexInfoRows] = await connection.query(

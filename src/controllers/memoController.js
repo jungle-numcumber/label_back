@@ -48,7 +48,7 @@ exports.getMemo = async function(req, res) {
 // highlightIdx를 기준으로 memo 추가 
 exports.postMemo = async function(req, res) {
   try{ 
-    const userIdx = 1;
+    const userIdx = 58;
     // const {pdfIdx, commitMessage, logs} = req.body;
     const {data, pdfIdx} = req.body;
     const highlightIdx = req.params.highlightIdx;
@@ -86,7 +86,7 @@ exports.postMemo = async function(req, res) {
 // app.put('/highlights/:highlightIdx/memo/:memoIdx', highlight.putPageHighlight);
 exports.putMemo = async function (req, res) { 
   try{
-    const userIdx = 1;
+    const userIdx = 58;
     const memoIdx = req.params.memoIdx;
     const data = req.body.data;
     let checkData = await textCheck(data);
@@ -122,7 +122,7 @@ exports.putMemo = async function (req, res) {
 exports.deleteMemo = async function (req, res) { 
   try { 
     // 본인인지 인증하는 절차 필요?
-    const userIdx = 1;
+    const userIdx = 58;
     const memoIdx = req.params.memoIdx;
     const deleteMemoInfoRows = await memoModel.deleteMemoInfo(memoIdx);
 

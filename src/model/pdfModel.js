@@ -1,13 +1,43 @@
 const { pool } = require("../../config/database");
 
-async function getPdfs(userId) {
+async function getPdfPageLink(pdfIdx, pageNum) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const getPdfPageInfoQuery = `
+            SELECT pdfIdx, pageNum, pageLink FROM bookpages WHERE pdfIdx = ${pdfIdx} AND pageNum = ${pageNum};
+                `;
+    const [getPdfPageInfoRows] = await connection.query(
+        getPdfPageInfoQuery
+    );
+    connection.release();
+    return getPdfPageInfoRows;
+}
+
+
+async function getPdfAll(userIdx) {
+    userIdx = 58;
     const connection = await pool.getConnection(async (conn) => conn);
     const getUserPdfInfoQuery = `
-            SELECT p.pdfIdx, p.pdfName, p.subTitle, p.author, p.firstPageLink, p.totalPage 
+            SELECT *
+            FROM pdfs
+            ORDER BY hits;
+                  `;
+  
+    const [getUserPdfInfoRows] = await connection.query(
+        getUserPdfInfoQuery
+    );
+    connection.release();
+    return getUserPdfInfoRows;
+}
+
+
+async function getUserPdfs(userId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const getUserPdfInfoQuery = `
+            SELECT p.pdfIdx, p.pdfName, p.subTitle, p.author, p.firstPageLink, p.totalPage, recentlyReadPage, userbooks.updatedAt 
             FROM userbooks
                     JOIN pdfs p on userbooks.pdfIdx = p.pdfIdx
             WHERE userbooks.userIdx = ${userId}
-            ORDER BY userbooks.updatedAt;
+            ORDER BY userbooks.updatedAt DESC;
                   `;
   
     const [getUserPdfInfoRows] = await connection.query(
@@ -63,7 +93,8 @@ async function putRecentlyReadPage(recentlyReadPage, userBookIdx) {
 
 
 module.exports = {
-    getPdfs,
+    getPdfAll, 
+    getUserPdfs,
     getPdfPageLink, 
     getLastPdfIdx,
     putRecentlyReadPage

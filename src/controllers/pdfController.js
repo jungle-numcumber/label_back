@@ -1,11 +1,38 @@
 const pdfModel = require('../model/pdfModel');
 const highlightModel = require('../model/highlightModel');
 
+
 exports.getPdfAll = async function (req, res) {
+    try {
+        const userIdx = req.params.userIdx;
+        const getPdfAllInfoRows = await pdfModel.getPdfAll(userIdx);
+
+        return res.json({
+            result: getPdfAllInfoRows,
+            isSuccess: true,
+            code: 1000,
+            message: "모든 pdf 조회 성공",
+        })
+
+    } catch (err) {
+        console.log(`App - get all pdf info Query error\n: ${JSON.stringify(err)}`);
+        
+        return res.json({
+            isSuccess: false,
+            code: 2000,
+            message: "모든 pdf 조회 실패",
+        });
+    }
+};
+
+
+
+
+exports.getPdfUserAll = async function (req, res) {
 
     try {
         const userIdx = req.params.userIdx;
-        const getUserPdfInfoRows = await pdfModel.getPdfs(userIdx);
+        const getUserPdfInfoRows = await pdfModel.getUserPdfs(userIdx);
 
         return res.json({
             result: getUserPdfInfoRows,
@@ -25,12 +52,14 @@ exports.getPdfAll = async function (req, res) {
     }
 };
 
+
+// app.get('/pdfs/:pdfIdx/pages/:pageNum',  pdf.getPdfPage);
 exports.getPdfPage = async function (req, res) {
 
     try {
         const pdfIdx = req.params.pdfIdx;
         const pageNum = req.params.pageNum;
-        const userIdx = 1; 
+        const userIdx = 58; 
 
         const [getPdfPageInfoRows] = await pdfModel.getPdfPageLink(pdfIdx,pageNum);
         const [getBookIndexRows] = await highlightModel.getBookIndexInfo(userIdx, getPdfPageInfoRows.pdfIdx)

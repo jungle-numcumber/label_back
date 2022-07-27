@@ -18,7 +18,7 @@ exports.getAllCommit = async function(req, res) {
   try {
     //회원가입 추가 후, userIdx 수정 예정 
     // const userIdx = req.params.userIdx;
-    const userIdx = 1;
+    const userIdx = 58;
     const getUserCommitInfoRows = await commitModel.getUserCommitInfo(userIdx);
 
     return res.json({
@@ -40,8 +40,9 @@ exports.getAllCommit = async function(req, res) {
 // -> 한 user의 특정 book의 commit을 가져온다. 
 exports.getBookCommit = async function(req, res) { 
   try {
-    // 회원가입 추가 후, userIdx 수정 예정 
-    const userIdx = req.params.userIdx;
+
+    const userIdx = 58;
+    
     const pdfIdx = req.params.pdfIdx;
     // console.log(userIdx,userBookIdx)
     const userBookIdx = await searchModel.getBookIndexInfo(userIdx, pdfIdx);
@@ -99,15 +100,18 @@ exports.getBookCommitWithIdx = async function(req, res) {
 // }
 
 exports.postCommit = async function(req, res) {
+
   try{
-    const userIdx = req.body.userIdx;
     const pdfIdx = req.body.pdfIdx;
-    // const userBookIdx = req.body.userBookIdx;
     const commitMessage = req.body.commitMessage;
-    // const logs = req.params.logs;
     const createdAt = req.body.createdAt;
     // editorLog는 API서버가 몽고db서버로 요청하는 것으로 변경
     // const editorLog = req.body.editorLog;
+
+  try{ 
+    const userIdx = 58;
+    const logs = '[]'; 
+
     let checkUserIdx = await argCheck(userIdx);
     let checkUserPdfIdx = await argCheck(pdfIdx);
     let checkCreatedAt = await argCheck(createdAt);
@@ -160,8 +164,9 @@ exports.postCommit = async function(req, res) {
 //app.put('/users/:userIdx/commits/:commitIdx', commit.putCommit);
 exports.putCommit = async function (req, res) { 
   try{
-    const userIdx = 1;
     const commitIdx = req.body.commitIdx;
+
+    const userIdx = 58;
     const commitMessage = req.body.commitMessage;
     
     let checkCommitMessage = await argCheck(commitMessage);
@@ -197,12 +202,18 @@ exports.putCommit = async function (req, res) {
 exports.deleteCommit = async function (req, res) { 
   try { 
     // 본인인지 인증하는 절차 필요?
-    const userIdx = req.body.userIdx;
+
+    const userIdx = 58;
     const userBookIdx = req.body.userBookIdx;
     const createdAt = req.body.createdAt;
     // const commitIdx = req.params.commitIdx;
     // const commit = await commitModel(req,params.userIdx, req.params.userBookIdx, req.params.createAt);
     const deleteHighlightInfoRows = await commitModel.deleteCommitInfo(userIdx, userBookIdx, createdAt);
+
+    const commitIdx = req.params.commitIdx;
+    const deleteHighlightInfoRows = await commitModel.deleteCommitInfo(commitIdx);
+
+
 
     return res.json({
       isSuccess: true, 
