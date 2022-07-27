@@ -101,7 +101,6 @@ exports.getBookCommitWithIdx = async function(req, res) {
 
 exports.postCommit = async function(req, res) {
 
-  try{
     const pdfIdx = req.body.pdfIdx;
     const commitMessage = req.body.commitMessage;
     const createdAt = req.body.createdAt;
@@ -159,7 +158,7 @@ exports.postCommit = async function(req, res) {
       message: "커밋 등록 실패", 
     })
   }
-};
+}
 
 //app.put('/users/:userIdx/commits/:commitIdx', commit.putCommit);
 exports.putCommit = async function (req, res) { 
@@ -203,15 +202,15 @@ exports.deleteCommit = async function (req, res) {
   try { 
     // 본인인지 인증하는 절차 필요?
 
-    const userIdx = 58;
-    const userBookIdx = req.body.userBookIdx;
-    const createdAt = req.body.createdAt;
-    // const commitIdx = req.params.commitIdx;
-    // const commit = await commitModel(req,params.userIdx, req.params.userBookIdx, req.params.createAt);
-    const deleteHighlightInfoRows = await commitModel.deleteCommitInfo(userIdx, userBookIdx, createdAt);
+    // const userIdx = 58;
+    // const userBookIdx = req.body.userBookIdx;
+    // const createdAt = req.body.createdAt;
+    // // const commitIdx = req.params.commitIdx;
+    // // const commit = await commitModel(req,params.userIdx, req.params.userBookIdx, req.params.createAt);
+    // const deleteHighlightInfoRows = await commitModel.deleteCommitInfo(userIdx, userBookIdx, createdAt);
 
-    const commitIdx = req.params.commitIdx;
-    const deleteHighlightInfoRows = await commitModel.deleteCommitInfo(commitIdx);
+    // const commitIdx = req.params.commitIdx;
+    // const deleteHighlightInfoRows = await commitModel.deleteCommitInfo(commitIdx);
 
 
 
