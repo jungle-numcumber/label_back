@@ -37,7 +37,7 @@ async function getUserPdfs(userId) {
             FROM userbooks
                     JOIN pdfs p on userbooks.pdfIdx = p.pdfIdx
             WHERE userbooks.userIdx = ${userId}
-            ORDER BY userbooks.updatedAt ASC;
+            ORDER BY userbooks.updatedAt DESC;
                   `;
   
     const [getUserPdfInfoRows] = await connection.query(
