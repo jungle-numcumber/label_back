@@ -51,7 +51,7 @@ async function insertSession (sessionID, userIdx) {
 }
 
 async function getUserInfo(userIdx) {
-  userIdx = 37
+  userIdx = 58
   const connection = await pool.getConnection(async (conn) => conn);
   
   const getUserInfoQuery = `
