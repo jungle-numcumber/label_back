@@ -1,5 +1,6 @@
 const commitModel = require('../model/commitModel');
 const highlightModel = require('../model/highlightModel');
+const searchModel = require('../model/searchModel');
 
 //값들이 제대로들어왔는지를 확인하기 위해서 사용
 async function argCheck(temp) {
@@ -40,11 +41,13 @@ exports.getAllCommit = async function(req, res) {
 exports.getBookCommit = async function(req, res) { 
   try {
     // 회원가입 추가 후, userIdx 수정 예정 
-    const userIdx = req.body.userIdx;
-    const userBookIdx = req.body.userBookIdx;
-    console.log(userIdx,userBookIdx)
-    const commits = await commitModel.getBookCommitInfo(userIdx, userBookIdx);
-    console.log(commits);
+    const userIdx = req.params.userIdx;
+    const pdfIdx = req.params.pdfIdx;
+    // console.log(userIdx,userBookIdx)
+    const userBookIdx = await searchModel.getBookIndexInfo(userIdx, pdfIdx);
+    // console.log(userBookIdx);
+    const commits = await commitModel.getBookCommitInfo(userIdx, String(userBookIdx[0]['userBookIdx']));
+    // console.log(commits);
     return res.json({
       result: commits, 
       isSuccess : true, 
@@ -67,7 +70,7 @@ exports.getBookCommitWithIdx = async function(req, res) {
     // 회원가입 추가 후, userIdx 수정 예정 
     const userCommitIdx = req.body.commitIdx;
     const commits = await commitModel.getBookCommitInfoWithIdx(userCommitIdx);
-    console.log(commits);
+    // console.log(commits);
     return res.json({
       result: commits, 
       isSuccess : true, 
@@ -84,29 +87,45 @@ exports.getBookCommitWithIdx = async function(req, res) {
   }
 };
 
+// async await 적용 안되는 코드. connect 부분에 await를 적용할 수 없어서 그런듯?
+// async function externalDBConnect(userIdx, pdfIdx) {
+//   Client.connect(url, function(err, database) {
+//     let db = database.db('editors');
+//     let result = await db.collection('editor').findOne({id: userIdx, pdfId: pdfIdx});
+//     // console.log(result['text']);
+//     await database.close();
+//     return result['text'];
+//   })
+// }
 
 exports.postCommit = async function(req, res) {
-  try{ 
+  try{
     const userIdx = req.body.userIdx;
-    const userBookIdx = req.body.userBookIdx;
+    const pdfIdx = req.body.pdfIdx;
+    // const userBookIdx = req.body.userBookIdx;
     const commitMessage = req.body.commitMessage;
     // const logs = req.params.logs;
     const createdAt = req.body.createdAt;
-    const editorLog = req.body.editorLog;
-
+    // editorLog는 API서버가 몽고db서버로 요청하는 것으로 변경
+    // const editorLog = req.body.editorLog;
     let checkUserIdx = await argCheck(userIdx);
-    let checkUserBookIdx = await argCheck(userBookIdx);
+    let checkUserPdfIdx = await argCheck(pdfIdx);
     let checkCreatedAt = await argCheck(createdAt);
-    // console.log(userIdx, userBookIdx, createdAt)
-    if ( checkUserIdx || checkUserBookIdx || checkCreatedAt){
+
+    if ( checkUserIdx || checkUserPdfIdx || checkCreatedAt){
       return res.json({
         isSuccess: false,
         code: 2200,
         message: "body 인자를 제대로 입력하세요",
       })
     }
-    // console.log(userIdx,userBookIdx)
+
+    const editorLog = await commitModel.externalDBConnect(userIdx, pdfIdx);
+    console.log(editorLog);
     let logObject = {}
+    const userBookIdxObj = await searchModel.getBookIndexInfo(userIdx, pdfIdx);
+    const userBookIdx = String(userBookIdxObj[0]['userBookIdx'])
+    // console.log(String(userBookIdx[0]['userBookIdx']));
     const currentHighlight = await highlightModel.getCurrentHighlight(userBookIdx);
     // console.log(currentHighlight);
     for (i = 0; i < currentHighlight.length; i++) {

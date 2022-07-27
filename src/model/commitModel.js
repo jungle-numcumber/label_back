@@ -1,6 +1,6 @@
 const { pool } = require("../../config/database");
-const MOMENT = require('moment');
-
+const Client = require('mongodb').MongoClient;
+const mongoUrl = require('../../config/database').mongoUrl;
 
 //특정 user의 commit을 다 가져오는 경우
 async function getUserCommitInfo(userIdx) {
@@ -120,6 +120,14 @@ async function deleteCommitInfo(userIdx, userBookIdx, createdAt) {
   return deleteCommitInfoRows;
 }
 
+async function externalDBConnect(userIdx, pdfIdx) {
+  let conn = await Client.connect(mongoUrl);
+  let db = conn.db('editors');
+  let result = await db.collection('editor').findOne({id: userIdx, pdfId: pdfIdx});
+  // console.log(result['text']);
+  await conn.close();
+  return result['text'];
+}
 
 module.exports = {
   getUserCommitInfo,
@@ -127,5 +135,6 @@ module.exports = {
   postCommitInfo, 
   putCommitInfo,
   deleteCommitInfo,
-  getBookCommitInfoWithIdx
+  getBookCommitInfoWithIdx,
+  externalDBConnect
 }

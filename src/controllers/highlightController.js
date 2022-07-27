@@ -40,18 +40,18 @@ exports.getHighlight = async function (req, res) {
 exports.getCommitHighlight = async function (req, res) {
     try {
         // userIdx 동적으로 수정 예정
-        const userIdx = req.params.userIdx;
-        const pdfIdx = req.params.pdfIdx;
+        // const userIdx = req.params.userIdx;
+        // const pdfIdx = req.params.pdfIdx;
         const commitIdx = req.params.commitIdx;
         const page = req.params.pageNum;
-        console.log(commitIdx)
+        // console.log(commitIdx)
         // const [bookIdx] = await highlightModel.getBookIndexInfo(userIdx, pdfIdx);
         const userCommit = await commitModel.getBookCommitInfoWithIdx(commitIdx);
         const logs = userCommit[0]['logs'];
         eval('var logObj='+logs);
-        console.log(page)
+        // console.log(page)
         const parsedLogs = logObj[page];
-        console.log(parsedLogs);
+        // console.log(parsedLogs);
         const getHighlightInfoRows = await highlightModel.getLogHighlight(parsedLogs);
         
         return res.json({

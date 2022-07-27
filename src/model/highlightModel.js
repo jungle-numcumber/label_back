@@ -71,7 +71,7 @@ async function getLogHighlight(logs) {
         }
     }
     logString += ')';
-    console.log(logString)
+    // console.log(logString)
     const getHighlightInfoQuery = `
         SELECT *
         FROM highlights
