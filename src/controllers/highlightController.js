@@ -1,4 +1,5 @@
 const highlightModel = require('../model/highlightModel');
+const commitModel = require('../model/commitModel');
 
 
 async function argCheck(temp) {
@@ -17,6 +18,41 @@ exports.getHighlight = async function (req, res) {
         const pdfIdx = req.params.pdfIdx;      
         const [bookIdx] = await highlightModel.getBookIndexInfo(userIdx, pdfIdx);
         const getHighlightInfoRows = await highlightModel.getHighlightInfo(bookIdx.userBookIdx);
+        
+        return res.json({
+            result: getHighlightInfoRows,
+            isSuccess: true,
+            code: 1000,
+            message: "해당 PDF 하이라이트들 조회 성공",
+        })
+
+    } catch (err) {
+        console.log(`App - get pdf highlight info Query error\n: ${JSON.stringify(err)}`);
+        
+        return res.json({
+            isSuccess: false,
+            code: 2000,
+            message: "해당 PDF 하이라이트들 조회 실패",
+        });
+    }
+};
+
+exports.getCommitHighlight = async function (req, res) {
+    try {
+        // userIdx 동적으로 수정 예정
+        // const userIdx = req.params.userIdx;
+        // const pdfIdx = req.params.pdfIdx;
+        const commitIdx = req.params.commitIdx;
+        const page = req.params.pageNum;
+        // console.log(commitIdx)
+        // const [bookIdx] = await highlightModel.getBookIndexInfo(userIdx, pdfIdx);
+        const userCommit = await commitModel.getBookCommitInfoWithIdx(commitIdx);
+        const logs = userCommit[0]['logs'];
+        eval('var logObj='+logs);
+        // console.log(page)
+        const parsedLogs = logObj[page];
+        // console.log(parsedLogs);
+        const getHighlightInfoRows = await highlightModel.getLogHighlight(parsedLogs);
         
         return res.json({
             result: getHighlightInfoRows,
