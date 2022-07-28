@@ -45,7 +45,7 @@ exports.getBookCommit = async function(req, res) {
     const temp = req.params.userIdx;
     const pdfIdx = req.params.pdfIdx;
     console.log(pdfIdx);
-    if (pdfIdx === undefined || pdfIdx === '' || pdfIdx === null) {
+    if (pdfIdx === undefined || pdfIdx === '' || pdfIdx === null || isNaN(pdfIdx)) {
       return res.json({ 
         isSuccess : false, 
         code : 2601, 
