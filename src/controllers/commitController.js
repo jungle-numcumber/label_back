@@ -131,7 +131,7 @@ exports.postCommit = async function(req, res) {
       })
     }
 
-    const editorLog = await commitModel.externalDBConnect(userIdx, pdfIdx);
+    const editorLog = await commitModel.externalDBConnect(String(userIdx), String(pdfIdx));
     console.log(editorLog);
     let logObject = {}
     const userBookIdxObj = await searchModel.getBookIndexInfo(userIdx, pdfIdx);
