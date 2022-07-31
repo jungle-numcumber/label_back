@@ -120,6 +120,7 @@ exports.postCommit = async function(req, res) {
   try{ 
     const userIdx = 58;
     const logs = '[]'; 
+    console.log(1);
 
     let checkUserIdx = await argCheck(userIdx);
     let checkUserPdfIdx = await argCheck(pdfIdx);
@@ -135,6 +136,7 @@ exports.postCommit = async function(req, res) {
 
     const editorLog = await commitModel.externalDBConnect(String(userIdx), String(pdfIdx));
     console.log(editorLog);
+    console.log(2);
     let logObject = {}
     const userBookIdxObj = await searchModel.getBookIndexInfo(userIdx, pdfIdx);
     const userBookIdx = String(userBookIdxObj[0]['userBookIdx'])
