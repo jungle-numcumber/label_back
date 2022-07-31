@@ -1,3 +1,4 @@
+const res = require("express/lib/response");
 const { pool } = require("../../config/database");
 const Client = require('mongodb').MongoClient;
 const mongoUrl = require('../../config/database').mongoUrl;
@@ -122,12 +123,17 @@ async function deleteCommitInfo(userIdx, userBookIdx, createdAt) {
 
 async function externalDBConnect(userIdx, pdfIdx) {
   console.log("externalDBConnect i");
+  try {
   let conn = await Client.connect(mongoUrl);
   let db = conn.db('editors');
   let result = await db.collection('editor').findOne({id: userIdx, pdfId: pdfIdx});
   // console.log(result['text']);
   await conn.close();
   return result['text'];
+  } catch (err){
+    console.log('error in externalDB: ', err);
+    return res.send("err");
+  }
 }
 
 module.exports = {
