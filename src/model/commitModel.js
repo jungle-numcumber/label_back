@@ -12,8 +12,7 @@ async function getUserCommitInfo(userIdx) {
       userBookIdx,
       commitMessage, 
       logs, 
-      createdAt, 
-      updatedAt
+      createdAt 
     FROM commits
     WHERE userIdx = ${userIdx};
   `;
