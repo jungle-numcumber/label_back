@@ -77,7 +77,7 @@ exports.postHighlight = async function (req, res) {
     try {
         // userIdx 동적으로 수정 예정
         const userIdx = 58;
-        const {pdfIdx, pageNum, startLine, startOffset, startNode, endLine, endOffset, endNode, data} = req.body;
+        const {pdfIdx, pageNum, startLine, startOffset, startNode, endLine, endOffset, endNode, data, color} = req.body;
         let checkPdf = await argCheck(pdfIdx);
         let checkPage = await argCheck(pageNum);
         let checkStartLine = await argCheck(startLine);
@@ -87,6 +87,7 @@ exports.postHighlight = async function (req, res) {
         let checkEndOff = await argCheck(endOffset);
         let checkEndNode = await argCheck(endNode);
         let checkData = await argCheck(data);
+        let checkColor = await argCheck(color);
 
         if (isNaN(pdfIdx) || isNaN(pageNum) || isNaN(startOffset) || isNaN(startNode) || isNaN(endOffset) || isNaN(endNode)) {
             return res.json({
@@ -96,7 +97,7 @@ exports.postHighlight = async function (req, res) {
             })
         }
         
-        if (checkPdf || checkPage || checkStartLine || checkStartOff || checkStartNode || checkEndLine || checkEndOff || checkEndNode || checkData) {
+        if (checkPdf || checkPage || checkStartLine || checkStartOff || checkStartNode || checkEndLine || checkEndOff || checkEndNode || checkData || checkColor) {
             return res.json({
                 isSuccess: false,
                 code: 2200,
@@ -104,7 +105,7 @@ exports.postHighlight = async function (req, res) {
             })
         }
         const [bookIdx] = await highlightModel.getBookIndexInfo(userIdx, pdfIdx);
-        const postHighlightRows = await highlightModel.postHighlightInfo(bookIdx.userBookIdx, pageNum, startLine, startOffset, startNode, endLine, endOffset, endNode, data);
+        const postHighlightRows = await highlightModel.postHighlightInfo(bookIdx.userBookIdx, pageNum, startLine, startOffset, startNode, endLine, endOffset, endNode, data, color);
         
         return res.json({
             isSuccess: true,
