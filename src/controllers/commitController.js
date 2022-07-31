@@ -1,6 +1,7 @@
 const commitModel = require('../model/commitModel');
 const highlightModel = require('../model/highlightModel');
 const searchModel = require('../model/searchModel');
+const pdfModel = require('../model/pdfModel');
 
 //값들이 제대로들어왔는지를 확인하기 위해서 사용
 async function argCheck(temp) {
@@ -44,6 +45,7 @@ exports.getBookCommit = async function(req, res) {
     const userIdx = 58;
     const temp = req.params.userIdx;
     const pdfIdx = req.params.pdfIdx;
+    
     console.log(pdfIdx);
     if (pdfIdx === undefined || pdfIdx === '' || pdfIdx === null || isNaN(pdfIdx)) {
       return res.json({ 

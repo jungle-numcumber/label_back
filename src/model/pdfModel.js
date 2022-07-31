@@ -88,6 +88,20 @@ async function putRecentlyReadPage(recentlyReadPage, userBookIdx) {
     return putRecentlyReadPage;
 }
 
+async function getBookNameWithIdx(pdfIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const getBookNameWithIdxQuery = `
+        SELECT pdfName FROM pdfs WHERE pdfIdx = ${pdfIdx};
+                `;
+  
+    const [getBookName] = await connection.query(
+        getBookNameWithIdxQuery
+    );
+    connection.release();
+    // console.log("last :", getLastPdfIdx[0].pdfIdx)
+    return getBookName;
+}
+
 
 
 

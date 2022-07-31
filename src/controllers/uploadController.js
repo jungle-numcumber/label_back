@@ -137,7 +137,7 @@ const postToS3 = (uploadingFilePath, fileName) => {
 
 const s3Link = (fileName) => {
   const s3LinkRoot = "https://label-book-storage.s3.ap-northeast-2.amazonaws.com/"
-  const s3Link = path.join(s3LinkRoot, fileName);
+  const s3Link = s3LinkRoot + fileName;
   return s3Link;
 }
 

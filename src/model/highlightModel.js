@@ -26,6 +26,7 @@ async function getHighlightInfo(bookIdx) {
             endOffset,
             endNode,
             data,
+            color, 
             createdAt,
             updatedAt
         FROM highlights
@@ -89,7 +90,7 @@ async function getLogHighlight(logs) {
 async function postHighlightInfo(bookIdx, pageNum, startLine, startOffset, startNode, endLine, endOffset, endNode, data) {
     const connection = await pool.getConnection(async (conn) => conn);
     const postHighlightInfoQuery = `
-            INSERT INTO highlights(userBookIdx, pageNum, startLine, startOffset, startNode, endLine, endOffset, endNode, data)
+            INSERT INTO highlights(userBookIdx, pageNum, startLine, startOffset, startNode, endLine, endOffset, endNode, data, color)
             VALUES (${bookIdx}, ${pageNum}, '${startLine}', ${startOffset}, ${startNode}, '${endLine}', ${endOffset}, ${endNode}, '${data}');
             `;
   
@@ -130,6 +131,7 @@ async function getHighlightPageInfo(bookIdx, pageNum) {
             endNode,
             data,
             active, 
+            color, 
             createdAt,
             updatedAt
         FROM highlights
