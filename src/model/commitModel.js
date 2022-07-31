@@ -121,6 +121,7 @@ async function deleteCommitInfo(userIdx, userBookIdx, createdAt) {
 }
 
 async function externalDBConnect(userIdx, pdfIdx) {
+  console.log("externalDBConnect i");
   let conn = await Client.connect(mongoUrl);
   let db = conn.db('editors');
   let result = await db.collection('editor').findOne({id: userIdx, pdfId: pdfIdx});
