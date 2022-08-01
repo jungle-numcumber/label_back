@@ -80,7 +80,8 @@ exports.getDailyCommit = async function(req, res) {
   try {
     const userIdx = 58;
     // const temp = req.params.userIdx;
-    const dateInfo = req.body.dateInfo;
+    const dateInfo = req.params.date;
+    // const dateInfo = req.body.dateInfo;
     console.log("dateInfo :", dateInfo);
     const getDailyCommitInfo = await commitModel.getDailyCommitInfo(userIdx, dateInfo);
     // console.log(commits);
