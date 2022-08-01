@@ -25,6 +25,23 @@ async function getUserCommitInfo(userIdx) {
 }
 
 
+
+async function getDailyCommitInfo(userIdx, dateInfo) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  console.log("date", dateInfo)
+  const getDailyCommitInfoQuery = `
+    SELECT bookName, commitMessage, createdAt
+    FROM commits
+    WHERE userIdx = ${userIdx} AND DATE_FORMAT(createdAt, '%Y-%m-%d') = '${dateInfo}';
+  `;
+  const [getDailyCommitInfoRows] = await connection.query(
+    getDailyCommitInfoQuery
+  );
+  connection.release();
+  return getDailyCommitInfoRows;
+}
+
+
 //특정 user, 특정 Book의 commit을 다 가져오는 경우
 async function getBookCommitInfo(userIdx, userBookIdx) {
   const connection = await pool.getConnection(async (conn) => conn);
@@ -48,6 +65,10 @@ async function getBookCommitInfo(userIdx, userBookIdx) {
   connection.release();
   return getCommitInfoRows;
 }
+
+
+
+
 
 //특정 user, 특정 Book의 commit을 다 가져오는 경우
 async function getBookCommitInfoWithIdx(userCommitIdx) {
@@ -145,5 +166,6 @@ module.exports = {
   putCommitInfo,
   deleteCommitInfo,
   getBookCommitInfoWithIdx,
-  externalDBConnect
+  externalDBConnect, 
+  getDailyCommitInfo
 }

@@ -75,6 +75,44 @@ exports.getBookCommit = async function(req, res) {
   }
 };
 
+// -> 한 user의 Daily commit을 가져온다. 
+exports.getDailyCommit = async function(req, res) { 
+  try {
+    const userIdx = 58;
+    // const temp = req.params.userIdx;
+    const dateInfo = req.body.dateInfo;
+    console.log("dateInfo :", dateInfo);
+    const getDailyCommitInfo = await commitModel.getDailyCommitInfo(userIdx, dateInfo);
+    // console.log(commits);
+    return res.json({
+      result: getDailyCommitInfo, 
+      isSuccess : true, 
+      code : 1000, 
+      message: "해당 유저의 daily commit 조회 성공", 
+    })
+  } catch (err) { 
+    console.log(`App - get user daily commit info Query error\n: ${JSON.stringify(err)}`);
+    return res.json({
+      isSuccess: false, 
+      code: 2000, 
+      message: "해당 유저의 daily commit 조회 실패",
+    });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // -> 한 user의 특정 commitIdx에 해당하는 commit을 가져온다. 
 exports.getBookCommitWithIdx = async function(req, res) { 
   try {
