@@ -84,14 +84,8 @@ exports.getDailyCommit = async function(req, res) {
     // const dateInfo = req.body.dateInfo;
     console.log("dateInfo :", dateInfoPrev);
     [year, month, day] = dateInfoPrev.split('-');
-    console.log("year :", year)
-    console.log("month :", month)
-    console.log("day :", day)
     if (month.length === 1) {month = "0" + month}
     if (day.length === 1) {day = "0" + day}
-    console.log("year :", year)
-    console.log("month :", month)
-    console.log("day :", day)
     let dateInfo = year + "-" + month + "-" + day;
     const getDailyCommitInfo = await commitModel.getDailyCommitInfo(userIdx, dateInfo);
     // console.log(commits);
