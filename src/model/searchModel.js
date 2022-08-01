@@ -13,6 +13,21 @@ async function getBookIndexInfo(userIdx, pdfIdx) {
     return getBookIndexInfoRows;
 }
 
+async function getPdfName(pdfIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const getPdfNameQuery = `
+            SELECT pdfName FROM pdfs WHERE pdfIdx = ${pdfIdx};
+                  `;
+  
+    const [getPdfNameRows] = await connection.query(
+        getPdfNameQuery
+    );
+    connection.release();
+    return getPdfNameRows;
+}
+
+
+
 async function searchHighlightInfo(bookIdx, keyword) {
     const connection = await pool.getConnection(async (conn) => conn);
     const searchHighlightInfoQuery = `
@@ -50,6 +65,7 @@ async function searchBookInfo(userIdx, keyword) {
 
 module.exports = {
     getBookIndexInfo,
+    getPdfName,
     searchHighlightInfo,
-    searchBookInfo,
+    searchBookInfo
 }

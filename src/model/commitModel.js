@@ -74,15 +74,15 @@ async function getBookCommitInfoWithIdx(userCommitIdx) {
 
 
 //logs : 추후에 수정해줄 예정
-async function postCommitInfo(userIdx, userBookIdx, commitMessage, logs, createdAt, editorLog) {
+async function postCommitInfo(userIdx, userBookIdx, commitMessage, logs, editorLog, bookName) {
   const connection = await pool.getConnection(async (conn) => conn);
 
   // const parsedDate = MOMENT.defaultFormat(createdAt);
   // const parsedDate2 = require('fecha').format(createdAt)
   // console.log('time', parsedDate, parsedDate2)
   const postCommitInfoQuery = `
-    INSERT INTO commits(userIdx, userBookIdx, commitMessage, logs, createdAt, editorLog)
-    VALUES ('${userIdx}', '${userBookIdx}', '${commitMessage}', '${logs}', '${createdAt}', '${editorLog}')
+    INSERT INTO commits(userIdx, userBookIdx, commitMessage, logs, editorLog, bookName)
+    VALUES ('${userIdx}', '${userBookIdx}', '${commitMessage}', '${logs}', '${editorLog}', '${bookName}')
   `;
   const [postCommitInfoRows] = await connection.query(
     postCommitInfoQuery
@@ -121,12 +121,15 @@ async function deleteCommitInfo(userIdx, userBookIdx, createdAt) {
 }
 
 async function externalDBConnect(userIdx, pdfIdx) {
+  console.log("userIdx :", userIdx);
+  console.log("pdfIdx :", pdfIdx);
+
   console.log("externalDBConnect i");
   try {
   let conn = await Client.connect(mongoUrl);
   let db = conn.db('editors');
   let result = await db.collection('editor').findOne({id: userIdx, pdfId: pdfIdx});
-  // console.log(result['text']);
+  console.log("text :", result['text']);
   await conn.close();
   return result['text'];
   } catch (err){

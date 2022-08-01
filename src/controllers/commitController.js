@@ -113,20 +113,17 @@ exports.postCommit = async function(req, res) {
 
     const pdfIdx = req.body.pdfIdx;
     const commitMessage = req.body.commitMessage;
-    const createdAt = req.body.createdAt;
     // editorLog는 API서버가 몽고db서버로 요청하는 것으로 변경
     // const editorLog = req.body.editorLog;
 
   try{ 
     const userIdx = 58;
     const logs = '[]'; 
-    console.log(1);
 
     let checkUserIdx = await argCheck(userIdx);
     let checkUserPdfIdx = await argCheck(pdfIdx);
-    let checkCreatedAt = await argCheck(createdAt);
 
-    if ( checkUserIdx || checkUserPdfIdx || checkCreatedAt){
+    if ( checkUserIdx || checkUserPdfIdx){
       return res.json({
         isSuccess: false,
         code: 2200,
@@ -140,6 +137,8 @@ exports.postCommit = async function(req, res) {
     let logObject = {}
     const userBookIdxObj = await searchModel.getBookIndexInfo(userIdx, pdfIdx);
     const userBookIdx = String(userBookIdxObj[0]['userBookIdx'])
+    const pdfNameObj = await searchModel.getPdfName(pdfIdx);
+    const bookName = String(pdfNameObj[0]['pdfName']);
     // console.log(String(userBookIdx[0]['userBookIdx']));
     const currentHighlight = await highlightModel.getCurrentHighlight(userBookIdx);
     // console.log(currentHighlight);
@@ -151,10 +150,9 @@ exports.postCommit = async function(req, res) {
         logObject[currentHighlight[i]['pageNum']].push(currentHighlight[i]['highlightIdx']);
       }
     }
-    // console.log(logObject);
     
     let logString = JSON.stringify(logObject);
-    const postCommitRows = await commitModel.postCommitInfo(userIdx, userBookIdx, commitMessage, logString, createdAt, editorLog);
+    const postCommitRows = await commitModel.postCommitInfo(userIdx, userBookIdx, commitMessage, logString, editorLog, bookName);
 
     return res.json({
       isSuccess: true, 
