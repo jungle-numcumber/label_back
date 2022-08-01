@@ -49,7 +49,8 @@ exports.getCommitHighlight = async function (req, res) {
         const userCommit = await commitModel.getBookCommitInfoWithIdx(commitIdx);
         const logs = userCommit[0]['logs'];
         eval('var logObj='+logs);
-        // console.log(page)
+        // console.log(logs);
+        // console.log(logObj);
         const parsedLogs = logObj[page];
         // console.log(parsedLogs);
         const getHighlightInfoRows = await highlightModel.getLogHighlight(parsedLogs);
@@ -62,7 +63,7 @@ exports.getCommitHighlight = async function (req, res) {
         })
 
     } catch (err) {
-        console.log(`App - get pdf highlight info Query error\n: ${JSON.stringify(err)}`);
+        console.log(`App - get pdf commit highlight info Query error\n: ${JSON.stringify(err)}`);
         
         return res.json({
             isSuccess: false,
