@@ -61,30 +61,40 @@ async function getCurrentHighlight(userBookIdx) {
 async function getLogHighlight(logs) {
     const connection = await pool.getConnection(async (conn) => conn);
     // console.log(userBookIdx)
-    let logString = '('
-    for(i = 0; i < logs.length; i++) {
-        logString += "'"
-        logString += String(logs[i]) 
-        if (i === logs.length - 1) {
+    try{
+        let logString = '('
+        for(i = 0; i < logs.length; i++) {
             logString += "'"
-        } else {
-            logString += "',"
+            logString += String(logs[i]) 
+            if (i === logs.length - 1) {
+                logString += "'"
+            } else {
+                logString += "',"
+            }
         }
+        logString += ')';
+        // console.log(logString)
+        const getHighlightInfoQuery = `
+            SELECT *
+            FROM highlights
+            WHERE highlightIdx IN ${logString}
+            `;
+      
+        const [getHighlightInfoRows] = await connection.query(
+            getHighlightInfoQuery
+        );
+        // console.log(getHighlightInfoRows)
+        connection.release();
+        return getHighlightInfoRows;
+
+    } catch (err){
+        console.log(`App - get pdf commit highlight info Query DB error\n: ${JSON.stringify(err)}`);
+        return res.json({
+            isSuccess: false,
+            code: 2000,
+            message: "해당 PDF 하이라이트들 DB 조회 실패",
+        });
     }
-    logString += ')';
-    // console.log(logString)
-    const getHighlightInfoQuery = `
-        SELECT *
-        FROM highlights
-        WHERE highlightIdx IN ${logString}
-        `;
-  
-    const [getHighlightInfoRows] = await connection.query(
-        getHighlightInfoQuery
-    );
-    // console.log(getHighlightInfoRows)
-    connection.release();
-    return getHighlightInfoRows;
 }
 
 async function postHighlightInfo(bookIdx, pageNum, startLine, startOffset, startNode, endLine, endOffset, endNode, data, color) {
