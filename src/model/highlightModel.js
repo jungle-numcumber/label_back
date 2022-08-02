@@ -88,6 +88,7 @@ async function getLogHighlight(logs) {
         return getHighlightInfoRows;
 
     } catch (err){
+        connection.release();
         console.log(`App - get pdf commit highlight info Query DB error\n: ${JSON.stringify(err)}`);
         return res.json({
             isSuccess: false,
