@@ -2,7 +2,7 @@ const res = require("express/lib/response");
 const { pool } = require("../../config/database");
 const Client = require('mongodb').MongoClient;
 const mongoUrl = require('../../config/database').mongoUrl;
-
+// var mongoUrl = 'mongodb://newcumber:newcumber@localhost:27017'
 //특정 user의 commit을 다 가져오는 경우
 async function getUserCommitInfo(userIdx) {
   const connection = await pool.getConnection(async (conn) => conn);
