@@ -106,10 +106,33 @@ exports.getDailyCommit = async function(req, res) {
 };
 
 
-
-
-
-
+// -> 한 유저가 commit rollback을 수행하면 commitHighlightLog 를 받아서 highlight active 상태 변경
+exports.putCommitRollback = async function(req, res) {
+  try {
+    const commitHighlightLog = req.body.commitHighlightLog;
+    const userBookIdx = req.body.userBookIdx
+    const commitHighlightLogParsed = []
+    for(key in commitHighlightLog) {
+      commitHighlightLog[key].forEach((element) => {
+        commitHighlightLogParsed.push(element);
+      })
+    }
+    const putRollbackHighlightResetRows = await commitModel.putRollbackHighlightReset(userBookIdx);
+    const putRollbackHighlightRows = await commitModel.putRollbackHighlight(commitHighlightLogParsed);
+    return res.json({
+      isSuccess: true, 
+      code: 1000, 
+      message: "commit highlight rollback 성공",
+    })
+  } catch (err) {
+    console.log(`App - post commit highlight rollback Query error\n: ${JSON.stringify(err)}`);
+    return res.json({
+      isSuccess: false, 
+      code: 2000, 
+      message: "해당 유저의 commit highlight rollback 실패",
+    });
+  }
+}
 
 
 

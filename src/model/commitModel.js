@@ -112,6 +112,34 @@ async function postCommitInfo(userIdx, userBookIdx, commitMessage, logs, editorL
   return postCommitInfoRows;
 }
 
+async function putRollbackHighlightReset(userBookIdx) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const putRollbackHighlightResetQuery = `
+    UPDATE highlights
+    SET active = 0
+    WHERE userBookIdx = ${userBookIdx};
+  `;
+  const [putRollbackHighlightResetRows] = await connection.query(
+    putRollbackHighlightResetQuery
+  );
+  connection.release();
+  return putRollbackHighlightResetRows
+}
+
+async function putRollbackHighlight(commitHighlightLogParsed) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const putRollbackHighlightQuery = `
+    UPDATE highlights
+    SET active = 1
+    WHERE highlightIdx IN (${commitHighlightLogParsed});
+  `;
+  const [putRollbackHighlightRows] = await connection.query(
+    putRollbackHighlightQuery
+  );
+  connection.release();
+  return putRollbackHighlightRows
+}
+
 
 // 링크에 접속하고자 하는 사람과, commit 작성 하는 사람이 같음을 인증하는 과정이 추가적으로 필요하다. 
 async function putCommitInfo(commitIdx, commitMessage) {
@@ -167,5 +195,7 @@ module.exports = {
   deleteCommitInfo,
   getBookCommitInfoWithIdx,
   externalDBConnect, 
-  getDailyCommitInfo
+  getDailyCommitInfo,
+  putRollbackHighlightReset,
+  putRollbackHighlight
 }
