@@ -11,7 +11,9 @@
 배포 사이트: [Label📚](https://label-ac.web.app/library)
 
 ![](https://blog.kakaocdn.net/dn/d4gARG/btrJerm8Eg4/A5SrazxZOcSDLFvWD1EFtk/img.jpg)
-PDF: [label.pdf](/public/label%EC%B5%9C%EC%A2%85%EC%B5%9C%EC%A2%85.pdf)
+PDF : [label.pdf](/public/label%EC%B5%9C%EC%A2%85%EC%B5%9C%EC%A2%85.pdf)
+<br/>
+발표영상 : [영상 보러가기](https://drive.google.com/file/d/1SuWiuNFcXvtL3KU8cyydgld8vJLxrQ10/view)
 
 <br/>
 <br/>
