@@ -106,10 +106,33 @@ exports.getDailyCommit = async function(req, res) {
 };
 
 
-
-
-
-
+// -> 한 유저가 commit rollback을 수행하면 commitHighlightLog 를 받아서 highlight active 상태 변경
+exports.putCommitRollback = async function(req, res) {
+  try {
+    const commitHighlightLog = req.body.commitHighlightLog;
+    const userBookIdx = req.body.userBookIdx
+    const commitHighlightLogParsed = []
+    for(key in commitHighlightLog) {
+      commitHighlightLog[key].forEach((element) => {
+        commitHighlightLogParsed.push(element);
+      })
+    }
+    const putRollbackHighlightResetRows = await commitModel.putRollbackHighlightReset(userBookIdx);
+    const putRollbackHighlightRows = await commitModel.putRollbackHighlight(commitHighlightLogParsed);
+    return res.json({
+      isSuccess: true, 
+      code: 1000, 
+      message: "commit highlight rollback 성공",
+    })
+  } catch (err) {
+    console.log(`App - post commit highlight rollback Query error\n: ${JSON.stringify(err)}`);
+    return res.json({
+      isSuccess: false, 
+      code: 2000, 
+      message: "해당 유저의 commit highlight rollback 실패",
+    });
+  }
+}
 
 
 
@@ -173,18 +196,20 @@ exports.postCommit = async function(req, res) {
         message: "body 인자를 제대로 입력하세요",
       })
     }
-
+    console.log(pdfIdx, commitMessage)
     const editorLog = await commitModel.externalDBConnect(String(userIdx), String(pdfIdx));
     console.log(editorLog);
     console.log(2);
     let logObject = {}
     const userBookIdxObj = await searchModel.getBookIndexInfo(userIdx, pdfIdx);
+    // console.log('after getBookIndexInfo')
     const userBookIdx = String(userBookIdxObj[0]['userBookIdx'])
     const pdfNameObj = await searchModel.getPdfName(pdfIdx);
+    // console.log('after get pdf name', pdfNameObj)
     const bookName = String(pdfNameObj[0]['pdfName']);
     // console.log(String(userBookIdx[0]['userBookIdx']));
     const currentHighlight = await highlightModel.getCurrentHighlight(userBookIdx);
-    // console.log(currentHighlight);
+    // console.log('currentHighlight',currentHighlight);
     for (i = 0; i < currentHighlight.length; i++) {
       // console.log('num:',i,currentHighlight[i])
       if (logObject[currentHighlight[i]['pageNum']] === undefined) {
@@ -193,10 +218,13 @@ exports.postCommit = async function(req, res) {
         logObject[currentHighlight[i]['pageNum']].push(currentHighlight[i]['highlightIdx']);
       }
     }
-    
+    // console.log('after highlight parsing')
+    editorLogParsed = JSON.stringify(editorLog);
+    // console.log('editorLog:', editorLogParsed)
     let logString = JSON.stringify(logObject);
-    const postCommitRows = await commitModel.postCommitInfo(userIdx, userBookIdx, commitMessage, logString, editorLog, bookName);
-
+    // console.log('logString:', logString)
+    const postCommitRows = await commitModel.postCommitInfo(userIdx, userBookIdx, commitMessage, logString, editorLogParsed, bookName);
+    // console.log('after postCommitRows')
     return res.json({
       isSuccess: true, 
       code: 1000, 

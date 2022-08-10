@@ -25,7 +25,7 @@ const s3 = new AWS.S3({
 
 exports.postBook = async function (req, res) {
   console.log("req:", req);
-  const {title, subTitle, author, maxPages} = req.body;
+  const {title, subTitle, author, maxPages} = JSON.parse(req.body.body);
   console.log("info :", title, subTitle, author);
   const uploadingPdfPathRoot = "./media/pdf_files/"
   let uploadingPdfPath;
