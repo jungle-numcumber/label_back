@@ -5,12 +5,6 @@ const crypto = require('crypto');
 const loginController = require('../controllers/loginController');
 const google = require('googleapis');
 
-// const inSession = await loginModel.checkSession(userIdx)
-// login
-// 궁금한 부분: 
-// 1. 시간이 지나면 세션기록 지워져야햐나? 사용자가 로그아웃 하지않으면 세션 계속남아있는거 처리 어떻게?
-// 2. 이미 로그인했는데 로그인 페이지 접속하려하면?
-// 3. 이미 로그아웃했는데 로그인 페이지 제외 다른 페이지 접속하려하면?
 
 exports.checkLoginState = async function (req, res){
     if (req.session.is_logined) {
@@ -19,13 +13,6 @@ exports.checkLoginState = async function (req, res){
         res.redirect("/login.html")
     }
 }
-
-// exports.getUserId = async function (req, res){
-//     if (req.session.)
-// }
-///////////// 
-
-
 
 
 async function googleLogin(tokens) {

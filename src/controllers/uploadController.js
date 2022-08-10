@@ -67,7 +67,6 @@ exports.postBook = async function (req, res) {
       }
       const pageLength = pageCnt
 
-      // const length = 151;
       for (let pageNum = 0, n = pageLength; pageNum < n; pageNum += 1) {
         console.log("pageNum :", pageNum);
         const writePdf = await PDFDocument.create();
