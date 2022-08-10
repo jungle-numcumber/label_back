@@ -1,6 +1,4 @@
 ///////////// 반드시 .env로 /////////////////////
-const AWS_ACCESS_KEY = 'AKIAZXJDEW4VR37YGKNF'
-const AWS_SECRET_ACCESS_KEY = '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'
 ///////////// 반드시 .env로 /////////////////////
 
 const uploadModel = require('../model/uploadModel');
@@ -12,15 +10,13 @@ const path = require('path');
 const {PDFDocument}  = require('pdf-lib');
 const pdftohtml = require('pdftohtmljs');
 const pdfToPng = require('pdf-to-png-converter').pdfToPng;
-
+require("dotenv").config();
 
 //S3연결의 위해 사용
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3({
-  // accessKeyId: process.env.AWS_ACCESS_KEY, 
-  // secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  accessKeyId: AWS_ACCESS_KEY, 
-  secretAccessKey: AWS_SECRET_ACCESS_KEY,
+  accessKeyId: process.env.AWS_ACCESS_KEY, 
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
 
 exports.postBook = async function (req, res) {

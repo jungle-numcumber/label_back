@@ -6,6 +6,14 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+    - name: connect aws s3
+      run: |
+        echo "AWS_ACCESS_KEY=$AWS_ACCESS_KEY" >> .env.production
+        echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> .env.production
+      env: 
+        AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
     - name: executing remote ssh commands using password
       uses: appleboy/ssh-action@master
       with:
