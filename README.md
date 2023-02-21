@@ -3,6 +3,13 @@
 <br/>
 <br/>
 
+## ERD
+URL : https://aquerytool.com/aquerymain/index/?rurl=3828f155-491f-4fee-9ae1-f5f705624ba1& <br/>
+Password : 75vflg
+
+![Label_20230221_163002](https://user-images.githubusercontent.com/56079377/220277277-2a527c31-7cff-49e1-8a93-cab18e996cea.png)
+
+
 ## Label(레이블) - 나만의 공부 노트📖
 프로젝트 기간: 2022.07.01~08.06
 
